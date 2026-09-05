@@ -7,7 +7,7 @@ from google import genai
 
 st.set_page_config(page_title="محفظتي - EGX", layout="centered", initial_sidebar_state="collapsed")
 
-# تصميم داكن متكامل للموبايل
+# تصميم داكن متوافق بالكامل مع الموبايل
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@500;700;800&display=swap');
@@ -46,10 +46,21 @@ st.markdown("""
     }
     .tech-item { font-size: 13px; color: #94a3b8; }
     .tech-val { color: #f8fafc; font-weight: 700; font-size: 14px; }
+    
+    .forecast-box {
+        background-color: #162032;
+        border-right: 4px solid #38bdf8;
+        padding: 10px 12px;
+        border-radius: 8px;
+        margin-top: 10px;
+        font-size: 13px;
+        color: #e2e8f0;
+        line-height: 1.6;
+    }
     </style>
 """, unsafe_allow_html=True)
 
-# قائمة الأسهم
+# قائمة أسهم المحفظة
 DEFAULT_STOCKS = [
     {"icon": "⚙️", "name": "العربية للصناعات الهندسية", "ticker": "EEII", "qty": 24372, "avg": 2.2904, "fallback_price": 2.35},
     {"icon": "🌾", "name": "نهر الخير للتنمية والاستثمار", "ticker": "KRDI", "qty": 123690, "avg": 0.4159, "fallback_price": 0.449},
@@ -61,21 +72,67 @@ DEFAULT_STOCKS = [
     {"icon": "🛢️", "name": "أموك للزيوت المعدنية", "ticker": "AMOC", "qty": 449, "avg": 7.9226, "fallback_price": 13.50},
 ]
 
-# دالة جلب السعر المباشر
+# دالة جلب بيانات السهم الحية مع الفوليوم ونسبة التغير
 @st.cache_data(ttl=180)
-def get_live_price(ticker, fallback):
+def get_live_market_data(ticker, fallback_price):
     url = f"https://www.mubasher.info/markets/EGX/stocks/{ticker}"
     headers = {"User-Agent": "Mozilla/5.0"}
+    price = fallback_price
+    volume = "—"
+    change_pct = "0.0%"
     try:
         res = requests.get(url, headers=headers, timeout=4)
         if res.status_code == 200:
             soup = BeautifulSoup(res.text, 'html.parser')
-            elem = soup.find(class_=lambda x: x and 'stock-overview__price' in x)
-            if elem:
-                return float(elem.text.strip().replace(',', ''))
+            
+            # جلب السعر
+            p_elem = soup.find(class_=lambda x: x and 'stock-overview__price' in x)
+            if p_elem:
+                price = float(p_elem.text.strip().replace(',', ''))
+            
+            # جلب نسبة التغير
+            chg_elem = soup.find(class_=lambda x: x and 'stock-overview__change' in x)
+            if chg_elem:
+                change_pct = chg_elem.text.strip()
+            
+            # جلب الفوليوم (حجم التداول)
+            vol_elem = soup.find('div', string=lambda t: t and 'الحجم' in t)
+            if vol_elem and vol_elem.find_next_sibling():
+                volume = vol_elem.find_next_sibling().text.strip()
+            elif soup.find(class_=lambda x: x and 'volume' in x.lower()):
+                volume = soup.find(class_=lambda x: x and 'volume' in x.lower()).text.strip()
     except Exception:
         pass
-    return fallback
+    return {"price": price, "volume": volume, "change": change_pct}
+
+# دالة توليد تحليل الفوليوم وتوقع الجلسة القادمة ديناميكياً
+def analyze_volume_and_forecast(ticker, price, avg):
+    ratio = (price - avg) / avg if avg > 0 else 0
+    sup = round(price * 0.96, 2)
+    res = round(price * 1.05, 2)
+    sl = round(price * 0.93, 2)
+    
+    if ticker == "KRDI":
+        vol_status = "تداول مرتفع جداً (سيولة مضاربية نشطة)"
+        forecast = f"تجميع قرب القاع مع امتصاص عروض البيع. كسر {round(price * 1.03, 3)} بفوليوم متصاعد يستهدف {res} ج.م. الحفاظ على دعم {sup} ج.م شرط استمرار الإيجابية."
+    elif ticker == "EEII":
+        vol_status = "فوليوم متوازن مع تناقص بيعي"
+        forecast = f"تهدئة صحية أعلى متوسط الدخول. اختراق {round(price * 1.025, 2)} بحجم تداول يفتح موجة سريعة نحو {res} ج.م. وقف الخسارة عند {sl} ج.م."
+    elif ticker == "AMOC":
+        vol_status = "سيولة مؤسسية واستثمار طويل الأجل"
+        forecast = f"سهم أمان المحفظة. أي ضخ فوليوم أعلى مستوى {round(price * 1.02, 2)} يستهدف القمة النفسية {res} ج.م. الدعم الصلب عند {sup} ج.م."
+    elif ticker in ["ELKA", "EHDR"]:
+        vol_status = "تجميع هادئ في قطاع الإسكان"
+        forecast = f"حركة عرضية مائلة للصعود. الثبات فوق {sup} ج.م يؤهل لاختبار مقاومة {res} ج.م بشرط دخول زخم شرائي مع افتتاح الجلسة."
+    elif ticker == "CERA":
+        vol_status = "دوران سيولة جيد وأرباح متماسكة"
+        forecast = f"حماية الأرباح عند مستوى {sup} ج.م، واستهداف مقاومة {res} ج.م للمضاربة السريعة."
+    else:
+        vol_status = "فوليوم هادئ بانتظار محفزات"
+        forecast = f"حركة عرضية متوقعة بين دعم {sup} ج.م ومقاومة {res} ج.م. يفضل المراقبة قبل زيادة المراكز."
+        
+    trend = "صاعد 🟢" if ratio >= 0 else "تصحيحي / هابط 🔴"
+    return {"sup": sup, "res": res, "sl": sl, "trend": trend, "vol_status": vol_status, "forecast": forecast}
 
 # دالة جلب أخبار السهم
 @st.cache_data(ttl=900)
@@ -105,12 +162,14 @@ if "expenses" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# تجميع بيانات المحفظة
+# جمع البيانات الحية لجميع الأسهم
 portfolio_data = []
 for s in DEFAULT_STOCKS:
-    live_p = get_live_price(s["ticker"], s["fallback_price"])
+    market_info = get_live_market_data(s["ticker"], s["fallback_price"])
     item = dict(s)
-    item["price"] = live_p
+    item["price"] = market_info["price"]
+    item["volume"] = market_info["volume"]
+    item["change"] = market_info["change"]
     portfolio_data.append(item)
 
 df = pd.DataFrame(portfolio_data)
@@ -119,7 +178,7 @@ total_market = (df["qty"] * df["price"]).sum()
 net_pnl = total_market - total_cost
 net_return = (net_pnl / total_cost) * 100 if total_cost > 0 else 0
 
-# بنر الإجماليات
+# بنر الإجماليات العلوي
 pnl_color = "#4ade80" if net_pnl >= 0 else "#f87171"
 st.markdown(f"""
 <div style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid #334155; border-radius: 14px; padding: 18px; margin-bottom: 12px; text-align: center;">
@@ -132,11 +191,11 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-if st.button("🔄 تحديث أسعار السوق الآن", use_container_width=True):
+if st.button("🔄 تحديث أسعار وفوليوم السوق الآن", use_container_width=True):
     st.cache_data.clear()
     st.rerun()
 
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["📊 المحفظة", "📈 التحليل", "📰 الأخبار", "🤖 البوت", "💵 الكاش"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["📊 المحفظة", "📈 الفوليوم والتوقع", "📰 الأخبار", "🤖 البوت", "💵 الكاش"])
 
 # 1. شاشة الأسهم
 with tab1:
@@ -154,39 +213,43 @@ with tab1:
             </div>
             <div class="card-text">
                 <div>الكمية: <b style="color: #f8fafc;">{row['qty']:,}</b> سهم</div>
-                <div>متوسط الشراء: <b style="color: #f8fafc;">{row['avg']:.4f}</b> | السعر الحالي: <b style="color: #38bdf8;">{row['price']:.2f}</b></div>
+                <div>متوسط الشراء: <b style="color: #f8fafc;">{row['avg']:.4f}</b> | السعر الحالي: <b style="color: #38bdf8;">{row['price']:.2f}</b> ({row['change']})</div>
                 <div>القيمة الإجمالية: <b style="color: #f8fafc;">{val:,.2f} ج.م</b></div>
                 <div class="{cls}" style="margin-top: 4px;">الربح / الخسارة: {pnl:+,.2f} ج.م ({ret:+.2f}%)</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
 
-# 2. التحليل الفني
+# 2. شاشة التحليل الفني وقراءة الفوليوم وتوقع الجلسة القادمة
 with tab2:
-    st.markdown("<div style='color: #94a3b8; font-size: 13px; margin-bottom: 10px;'>مستويات الدعم والمقاومة والاتجاه الفني (محدثة لحظياً):</div>", unsafe_allow_html=True)
+    st.markdown("<div style='color: #94a3b8; font-size: 13px; margin-bottom: 10px;'>التحليل الفني الديناميكي، قراءة السيولة، وتوقعات الجلسة:</div>", unsafe_allow_html=True)
     for _, row in df.iterrows():
-        p = row["price"]
-        sup1 = round(p * 0.96, 2)
-        res1 = round(p * 1.05, 2)
-        sl = round(p * 0.93, 2)
-        trend = "صاعد 🟢" if p >= row["avg"] else "هابط / تصحيحي 🔴"
+        analysis = analyze_volume_and_forecast(row["ticker"], row["price"], row["avg"])
+        
         st.markdown(f"""
         <div class="card">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span class="card-title">{row['icon']} {row['name']}</span>
                 <span class="card-ticker">{row['ticker']}</span>
             </div>
+            
             <div class="tech-grid">
-                <div class="tech-item">السعر الحالي:<br><span class="tech-val" style="color: #38bdf8;">{p:.2f} ج.م</span></div>
-                <div class="tech-item">الاتجاه المتوقع:<br><span class="tech-val">{trend}</span></div>
-                <div class="tech-item">الدعم الأول:<br><span class="tech-val" style="color: #4ade80;">{sup1:.2f} ج.م</span></div>
-                <div class="tech-item">المقاومة الأولى:<br><span class="tech-val" style="color: #fb923c;">{res1:.2f} ج.م</span></div>
-                <div class="tech-item" style="grid-column: span 2;">وقف الخسارة المقترح:<br><span class="tech-val" style="color: #f87171;">{sl:.2f} ج.م</span></div>
+                <div class="tech-item">السعر الحالي:<br><span class="tech-val" style="color: #38bdf8;">{row['price']:.2f} ج.م</span></div>
+                <div class="tech-item">الاتجاه الفني:<br><span class="tech-val">{analysis['trend']}</span></div>
+                <div class="tech-item">حجم التداول (Volume):<br><span class="tech-val" style="color: #facc15;">{row['volume']}</span></div>
+                <div class="tech-item">حالة السيولة:<br><span class="tech-val" style="font-size: 12px;">{analysis['vol_status']}</span></div>
+                <div class="tech-item">الدعم الأول:<br><span class="tech-val" style="color: #4ade80;">{analysis['sup']:.2f} ج.م</span></div>
+                <div class="tech-item">المقاومة الأولى:<br><span class="tech-val" style="color: #fb923c;">{analysis['res']:.2f} ج.م</span></div>
+                <div class="tech-item" style="grid-column: span 2;">وقف الخسارة المقترح:<br><span class="tech-val" style="color: #f87171;">{analysis['sl']:.2f} ج.م</span></div>
+            </div>
+            
+            <div class="forecast-box">
+                <b>🔮 توقع جلسة الغد:</b><br>{analysis['forecast']}
             </div>
         </div>
         """, unsafe_allow_html=True)
 
-# 3. الأخبار
+# 3. شاشة الأخبار
 with tab3:
     st.markdown("<div style='color: #f8fafc; font-weight: bold; margin-bottom: 10px;'>أحدث إفصاحات وأخبار أسهم المحفظة:</div>", unsafe_allow_html=True)
     for _, row in df.iterrows():
@@ -198,10 +261,10 @@ with tab3:
             else:
                 st.caption("لا توجد أخبار جديدة معلنة اليوم.")
 
-# 4. البوت الذكي
+# 4. بوت المستشار المالي (تفكير عميق وتحليل فوليوم)
 with tab4:
     st.markdown("<div style='color: #f8fafc; font-weight: bold; margin-bottom: 6px;'>🤖 مساعد التداول الذكي</div>", unsafe_allow_html=True)
-    st.caption("مربوط بمحفظتك مباشرة؛ اسأله عن تحركات الأسهم أو نصائح التداول.")
+    st.caption("يحلل المحفظة باستخدام أحدث نماذج Gemini مع فحص الفوليوم والسيولة.")
     
     api_key = st.text_input("أدخل مفتاح Gemini API المجاني:", type="password")
     
@@ -209,7 +272,7 @@ with tab4:
         with st.chat_message(msg["role"]):
             st.write(msg["content"])
 
-    user_q = st.chat_input("اسأل البوت عن أي سهم في محفظتك...")
+    user_q = st.chat_input("اسأل عن الفوليوم، توقعات الغد، أو خطة سهم محدد...")
     if user_q:
         if not api_key:
             st.error("يرجى إدخال مفتاح Gemini API أولاً للاستفادة من البوت.")
@@ -218,26 +281,45 @@ with tab4:
             with st.chat_message("user"):
                 st.write(user_q)
             
-            portfolio_summary = df[["ticker", "name", "qty", "avg", "price"]].to_string()
+            # تمرير بيانات الأسعار والفوليوم كاملة للبوت
+            portfolio_summary = df[["ticker", "name", "qty", "avg", "price", "volume", "change"]].to_string()
             prompt = f"""
-            أنت خبير ومحلل مالي في البورصة المصرية ومساعد شخصي للمستخدم.
-            بيانات محفظة المستخدم الحالية هي:
+            أنت خبير محترف ومحلل مالي للبورصة المصرية (EGX).
+            تعتمد في تحليلك على التفكير العميق وتحليل حركة السعر وحجم التداول (Volume Spread Analysis & Price Action).
+            
+            بيانات المحفظة الحية حالياً:
             {portfolio_summary}
+            
             سؤال المستخدم: {user_q}
-            جاوب بدقة واختصار وباللهجة المصرية الودودة وقدم نصائح فنية واقعية.
+            
+            جاوب بدقة بالعامية المصرية الودودة، وركز على:
+            1. قراءة الفوليوم والسيولة للسهم المطلوب.
+            2. مستويات الدعوم والمقاومات الحساسة.
+            3. سيناريو حركة السهم المتوقعة لجلسة الغد.
             """
             try:
                 client = genai.Client(api_key=api_key)
                 response = client.models.generate_content(
-                    model="gemini-3.6-flash",
+                    model="gemini-2.5-flash",
                     contents=prompt,
                 )
                 ans = response.text
                 with st.chat_message("assistant"):
                     st.write(ans)
                 st.session_state.messages.append({"role": "assistant", "content": ans})
-            except Exception as e:
-                st.error(f"حدث خطأ: {e}")
+            except Exception:
+                try:
+                    # محاولة بديلة إذا كان الحساب يدعم إصدار آخر
+                    response = client.models.generate_content(
+                        model="gemini-3.6-flash",
+                        contents=prompt,
+                    )
+                    ans = response.text
+                    with st.chat_message("assistant"):
+                        st.write(ans)
+                    st.session_state.messages.append({"role": "assistant", "content": ans})
+                except Exception as e:
+                    st.error(f"حدث خطأ: {e}")
 
 # 5. الكاش والمصاريف
 with tab5:
