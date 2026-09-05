@@ -7,18 +7,16 @@ from google import genai
 
 st.set_page_config(page_title="محفظة تيلدا", layout="centered", initial_sidebar_state="collapsed")
 
-# تصميم داكن نقي ومنع تداخل النصوص على شاشات الهواتف
+# تصميم داكن متناسق للهواتف
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@500;700;800&display=swap');
     * { font-family: 'Cairo', sans-serif !important; direction: rtl; text-align: right; }
     .block-container { padding: 0.8rem !important; background-color: #0b0f19; }
     
-    /* إخفاء القائمة الجانبية نهائياً لمنع أي تداخل شاشات */
     [data-testid="stSidebar"] { display: none !important; }
     [data-testid="collapsedControl"] { display: none !important; }
     
-    /* بنر الصلاة على النبي */
     .prophet-banner {
         background: linear-gradient(90deg, #10b981, #059669);
         color: #ffffff;
@@ -30,7 +28,6 @@ st.markdown("""
         margin-bottom: 12px;
     }
     
-    /* كارت ملخص المحفظة */
     .summary-card {
         background: linear-gradient(135deg, #1e1b4b, #312e81);
         border: 1px solid #4338ca;
@@ -38,15 +35,6 @@ st.markdown("""
         padding: 16px;
         margin-bottom: 14px;
         text-align: center;
-    }
-    
-    /* كارت السهم */
-    .stock-box {
-        background-color: #151b28;
-        border: 1px solid #283347;
-        border-radius: 14px;
-        padding: 14px;
-        margin-bottom: 12px;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -57,15 +45,27 @@ st.markdown("<h2 style='text-align: center; color: #f8fafc; margin-bottom: 12px;
 
 # قائمة الأسهم
 DEFAULT_STOCKS = [
-    {"icon": "⚙️", "name": "العربية للصناعات الهندسية", "ticker": "EEII", "qty": 24372, "avg": 2.2904, "fallback_price": 2.35, "purify": "شرعي (تطهير 1.2%)"},
-    {"icon": "🌾", "name": "نهر الخير للتنمية والاستثمار", "ticker": "KRDI", "qty": 123690, "avg": 0.4159, "fallback_price": 0.449, "purify": "شرعي (تطهير 0.8%)"},
-    {"icon": "🏢", "name": "القاهرة للإسكان والتعمير", "ticker": "ELKA", "qty": 21990, "avg": 1.7544, "fallback_price": 1.87, "purify": "شرعي نقي 100%"},
-    {"icon": "🏺", "name": "سيراميكا ريماس", "ticker": "CERA", "qty": 22100, "avg": 1.3159, "fallback_price": 1.50, "purify": "شرعي (تطهير 1.5%)"},
-    {"icon": "🏗️", "name": "المصريين للإسكان والتنمية", "ticker": "EHDR", "qty": 9793, "avg": 2.6623, "fallback_price": 2.88, "purify": "شرعي نقي 100%"},
-    {"icon": "💎", "name": "العز سيراميك (الجوهرة)", "ticker": "ECAP", "qty": 365, "avg": 34.4619, "fallback_price": 33.62, "purify": "شرعي (تطهير 2.1%)"},
-    {"icon": "🔩", "name": "مصر الوطنية للصلب (عتاقة)", "ticker": "ATQA", "qty": 592, "avg": 12.6712, "fallback_price": 12.17, "purify": "شرعي نقي 100%"},
-    {"icon": "🛢️", "name": "أموك للزيوت المعدنية", "ticker": "AMOC", "qty": 449, "avg": 7.9226, "fallback_price": 13.50, "purify": "شرعي (تطهير 1.1%)"},
+    {"icon": "⚙️", "name": "العربية للصناعات الهندسية", "ticker": "EEII", "qty": 24372, "avg": 2.2904, "fallback_price": 2.35},
+    {"icon": "🌾", "name": "نهر الخير للتنمية والاستثمار", "ticker": "KRDI", "qty": 123690, "avg": 0.4159, "fallback_price": 0.449},
+    {"icon": "🏢", "name": "القاهرة للإسكان والتعمير", "ticker": "ELKA", "qty": 21990, "avg": 1.7544, "fallback_price": 1.87},
+    {"icon": "🏺", "name": "سيراميكا ريماس", "ticker": "CERA", "qty": 22100, "avg": 1.3159, "fallback_price": 1.50},
+    {"icon": "🏗️", "name": "المصريين للإسكان والتنمية", "ticker": "EHDR", "qty": 9793, "avg": 2.6623, "fallback_price": 2.88},
+    {"icon": "💎", "name": "العز سيراميك (الجوهرة)", "ticker": "ECAP", "qty": 365, "avg": 34.4619, "fallback_price": 33.62},
+    {"icon": "🔩", "name": "مصر الوطنية للصلب (عتاقة)", "ticker": "ATQA", "qty": 592, "avg": 12.6712, "fallback_price": 12.17},
+    {"icon": "🛢️", "name": "أموك للزيوت المعدنية", "ticker": "AMOC", "qty": 449, "avg": 7.9226, "fallback_price": 13.50},
 ]
+
+# نسب التطهير المعتمدة لكل سهم
+PURIFY_RATES = {
+    "EEII": 0.012,  # 1.2%
+    "KRDI": 0.008,  # 0.8%
+    "ELKA": 0.0,    # نقي 100%
+    "CERA": 0.015,  # 1.5%
+    "EHDR": 0.0,    # نقي 100%
+    "ECAP": 0.021,  # 2.1%
+    "ATQA": 0.0,    # نقي 100%
+    "AMOC": 0.011,  # 1.1%
+}
 
 # دالة جلب بيانات السهم الحية
 @st.cache_data(ttl=180)
@@ -94,7 +94,7 @@ def get_live_market_data(ticker, fallback_price):
         pass
     return {"price": price, "volume": volume, "change": change_pct}
 
-# دالة تحليل الفوليوم وتوقع الجلسة
+# دالة تحليل الفوليوم وتوقع الحركة
 def analyze_volume_and_forecast(ticker, price, avg):
     ratio = (price - avg) / avg if avg > 0 else 0
     sup = round(price * 0.96, 2)
@@ -151,7 +151,7 @@ if "expenses" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# جلب البيانات الحية
+# جمع البيانات الحية
 portfolio_data = []
 for s in DEFAULT_STOCKS:
     market_info = get_live_market_data(s["ticker"], s["fallback_price"])
@@ -167,7 +167,7 @@ total_market = (df["qty"] * df["price"]).sum()
 net_pnl = total_market - total_cost
 net_return = (net_pnl / total_cost) * 100 if total_cost > 0 else 0
 
-# بطاقة ملخص المحفظة
+# بنر ملخص المحفظة
 pnl_color = "#34d399" if net_pnl >= 0 else "#f87171"
 st.markdown(f"""
 <div class="summary-card">
@@ -184,9 +184,9 @@ if st.button("🔄 تحديث أسعار وفوليوم السوق الآن", us
     st.cache_data.clear()
     st.rerun()
 
-# قائمة اختيار أنيقة وعريضة بأعلى الشاشة (بديل مثالي ونظيف للـ Sidebar)
+# القائمة المنسدلة النظيفة للتنقل
 menu = st.selectbox(
-    "☰ انتقال سريع إلى:",
+    "☰ اختيار القسم:",
     ["📊 الأسهم والمحفظة", "📈 الفوليوم والتوقع", "⚖️ التطهير الشرعي", "📰 أخبار البورصة", "🤖 مساعد التداول", "💵 إدارة الكاش"]
 )
 st.write("")
@@ -217,7 +217,7 @@ if menu == "📊 الأسهم والمحفظة":
             st.markdown(f":{color_delta}[**الربح / الخسارة:** {pnl:+,.2f} ج.م ({ret:+.2f}%)]")
             st.divider()
 
-# 2. شاشة التحليل والفوليوم
+# 2. شاشة التحليل الفني والفوليوم
 elif menu == "📈 الفوليوم والتوقع":
     st.markdown("### 📈 التحليل الفني وحجم التداول")
     for _, row in df.iterrows():
@@ -240,18 +240,39 @@ elif menu == "📈 الفوليوم والتوقع":
             st.info(f"🔮 **توقع جلسة الغد:**\n\n{analysis['forecast']}")
             st.divider()
 
-# 3. شاشة التطهير
+# 3. شاشة التطهير الشرعي مع الحساب المالي الفعلي
 elif menu == "⚖️ التطهير الشرعي":
-    st.markdown("### ⚖️ الموقف الشرعي ونسب التطهير")
+    st.markdown("### ⚖️ الموقف الشرعي ومبالغ التطهير المستحقة")
+    total_purify_due = 0.0
+    
     for _, row in df.iterrows():
         val = row["qty"] * row["price"]
-        pnl = val - (row["qty"] * row["avg"])
+        cost = row["qty"] * row["avg"]
+        pnl = val - cost
+        rate = PURIFY_RATES.get(row["ticker"], 0.0)
+        purify_amt = (pnl * rate) if (pnl > 0 and rate > 0) else 0.0
+        total_purify_due += purify_amt
+        
         with st.container():
             st.markdown(f"**{row['icon']} {row['name']}** (`{row['ticker']}`)")
-            st.success(f"الحالة: {row['purify']}")
-            if pnl > 0 and "تطهير" in row['purify']:
-                st.caption(f"الأرباح السوقية المحققة: {pnl:,.2f} ج.م")
+            if rate == 0.0:
+                st.success("🟢 سهم نقي شرعاً 100% (لا يستوجب تطهير)")
+            else:
+                st.warning(f"🟡 سهم مختلط - نسبة التطهير: **{rate * 100:.1f}%**")
+                c1, c2 = st.columns(2)
+                c1.caption(f"الأرباح السوقية: **{pnl:+,.2f} ج.م**")
+                if pnl > 0:
+                    c2.markdown(f"💸 **مستحق التطهير:** `{purify_amt:,.2f} ج.م`")
+                else:
+                    c2.caption("لا يستحق تطهير (المركز في خسارة/تعادل)")
             st.divider()
+            
+    st.markdown(f"""
+    <div style="background-color: #1e1b4b; border: 1px solid #6366f1; border-radius: 12px; padding: 14px; text-align: center;">
+        <div style="color: #c7d2fe; font-size: 13px;">إجمالي مبالغ التطهير المستحقة على أرباح المحفظة</div>
+        <div style="color: #fb923c; font-size: 22px; font-weight: bold; margin-top: 4px;">{total_purify_due:,.2f} ج.م</div>
+    </div>
+    """, unsafe_allow_html=True)
 
 # 4. شاشة الأخبار
 elif menu == "📰 أخبار البورصة":
@@ -263,7 +284,7 @@ elif menu == "📰 أخبار البورصة":
                 for n in news:
                     st.markdown(f"• [{n['title']}]({n['url']})")
             else:
-                st.caption("لا توجد إفصاحات جديدة معلنة اليوم.")
+                st.caption("لا توجد إفصاحات جديدة اليوم.")
 
 # 5. شاشة البوت
 elif menu == "🤖 مساعد التداول":
@@ -285,11 +306,11 @@ elif menu == "🤖 مساعد التداول":
             
             portfolio_summary = df[["ticker", "name", "qty", "avg", "price", "volume", "change"]].to_string()
             prompt = f"""
-            أنت خبير مالي في البورصة المصرية لمحفظة تيلدا.
-            بيانات المحفظة الحالية:
+            أنت خبير ومحلل مالي للبورصة المصرية لمحفظة تيلدا.
+            بيانات المحفظة الحية:
             {portfolio_summary}
             سؤال المستخدم: {user_q}
-            جاوب باختصار بالعامية المصرية وركز على السيولة والدعوم والمقاومات.
+            جاوب باختصار ووضوح وركز على حركة السعر، الفوليوم، ومستويات الدعم والمقاومة.
             """
             try:
                 client = genai.Client(api_key=api_key)
