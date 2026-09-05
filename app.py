@@ -3,7 +3,7 @@ import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 import datetime
-import google.generativeai as genai
+from google import genai
 
 st.set_page_config(page_title="محفظتي - EGX", layout="centered", initial_sidebar_state="collapsed")
 
@@ -227,9 +227,11 @@ with tab4:
             جاوب بدقة واختصار وباللهجة المصرية الودودة وقدم نصائح فنية واقعية.
             """
             try:
-                genai.configure(api_key=api_key)
-                model = genai.GenerativeModel("gemini-pro")
-                response = model.generate_content(prompt)
+                client = genai.Client(api_key=api_key)
+                response = client.models.generate_content(
+                    model="gemini-2.5-flash",
+                    contents=prompt,
+                )
                 ans = response.text
                 with st.chat_message("assistant"):
                     st.write(ans)
