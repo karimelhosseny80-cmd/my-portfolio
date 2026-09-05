@@ -11,6 +11,101 @@ st.set_page_config(page_title="محفظة تيلدا", layout="centered", initia
 
 DATA_FILE = "portfolio_data.json"
 
+# القاموس الحصري الكامل لأسهم كاشف
+SHARIAH_ALL_STOCKS = {
+    "BIGP": {"name": "بي اي جي للتجاره والاستثمار", "rate": 0.00, "category": "نقي"},
+    "CAED": {"name": "القاهرة للخدمات التعليمية", "rate": 0.00, "category": "نقي"},
+    "FIRE": {"name": "الاولى للاستثمار", "rate": 0.00, "category": "نقي"},
+    "FNAR": {"name": "الفنار للمقاولات", "rate": 0.00, "category": "نقي"},
+    "MISR": {"name": "مصر انتركونتننتال لصناعة الجرانيت والرخام", "rate": 0.00, "category": "نقي"},
+    "MOED": {"name": "المصرية لنظم التعليم الحديثة", "rate": 0.00, "category": "نقي"},
+    "NEDA": {"name": "شمال الصعيد للتنمية الزراعية - نيوداب", "rate": 0.00, "category": "نقي"},
+    "UPMS": {"name": "الاتحاد الصيدلي للخدمات الطبية", "rate": 0.00, "category": "نقي"},
+    "AMES": {"name": "المركز الطبي الجديد - الاسكندرية للخدمات", "rate": 0.01, "category": "شبه نقي"},
+    "BIOC": {"name": "جلاسكو", "rate": 0.0069, "category": "شبه نقي"},
+    "CEFM": {"name": "مطاحن مصر الوسطى", "rate": 0.038, "category": "شبه نقي"},
+    "DCRC": {"name": "دلتا للانشاء والتعمير", "rate": 0.0072, "category": "شبه نقي"},
+    "EGAS": {"name": "غاز مصر", "rate": 0.0006, "category": "شبه نقي"},
+    "ELNA": {"name": "النصر للحاصلات الزراعية", "rate": 0.00, "category": "شبه نقي"},
+    "ELWA": {"name": "الوادي للاستثمار والتنمية", "rate": 0.0212, "category": "شبه نقي"},
+    "FCMD": {"name": "فيوتشر كير للصناعات الطبية", "rate": 0.0131, "category": "شبه نقي"},
+    "GGRN": {"name": "جو جرين للاستثمار الزراعى والتنمية", "rate": 0.0001, "category": "شبه نقي"},
+    "ICFC": {"name": "الدولية للأسمدة والكيماويات", "rate": 0.011, "category": "شبه نقي"},
+    "IEEC": {"name": "المشروعات الصناعية", "rate": 0.0148, "category": "شبه نقي"},
+    "INEG": {"name": "المجموعة المتكاملة", "rate": 0.0052, "category": "شبه نقي"},
+    "INFI": {"name": "الاسماعيلية الوطنية للصناعات الغذائية - فوديكو", "rate": 0.0139, "category": "شبه نقي"},
+    "MBSC": {"name": "مصر بني سويف للاسمنت", "rate": 0.0128, "category": "شبه نقي"},
+    "MILS": {"name": "مطاحن شمال القاهرة", "rate": 0.0089, "category": "شبه نقي"},
+    "MOSC": {"name": "مصر للزيوت و الصابون", "rate": 0.0008, "category": "شبه نقي"},
+    "NDRL": {"name": "الحفر الوطنية", "rate": 0.00, "category": "شبه نقي"},
+    "OBRI": {"name": "العبور للاستثمار العقاري", "rate": 0.0094, "category": "شبه نقي"},
+    "PHGC": {"name": "بريميم هيلثكير جروب", "rate": 0.00, "category": "شبه نقي"},
+    "PRCL": {"name": "الشركة العامة لمنتجات الخزف والصينى شينى", "rate": 0.0007, "category": "شبه نقي"},
+    "SIPC": {"name": "سبأ الدولية للأدوية والصناعات الكيماوية", "rate": 0.00, "category": "شبه نقي"},
+    "SMFR": {"name": "سماد مصر - ايجيفرت", "rate": 0.0195, "category": "شبه نقي"},
+    "VERT": {"name": "فرتيكا للصناعة و التجارة", "rate": 0.00, "category": "شبه نقي"},
+    "ZEOT": {"name": "الزيوت المستخلصة ومنتجاتها", "rate": 0.0047, "category": "شبه نقي"},
+    "ZMID": {"name": "زهراء المعادي", "rate": 0.0408, "category": "شرعي مختلط A"},
+    "AXPH": {"name": "الاسكندرية للادوية", "rate": 0.0049, "category": "شرعي مختلط A"},
+    "BONY": {"name": "بنيان", "rate": 0.03, "category": "شرعي مختلط A"},
+    "CLHO": {"name": "مستشفى كليوباترا", "rate": 0.0063, "category": "شرعي مختلط A"},
+    "CPCI": {"name": "القاهرة للادوية", "rate": 0.0074, "category": "شرعي مختلط A"},
+    "EGAL": {"name": "مصر للالومنيوم", "rate": 0.0073, "category": "شرعي مختلط A"},
+    "FTNS": {"name": "فيتنس برايم", "rate": 0.00, "category": "شرعي مختلط A"},
+    "ISMA": {"name": "الاسماعيلية مصر للدواجن", "rate": 0.00, "category": "شرعي مختلط A"},
+    "MTIE": {"name": "ام ام جروب للصناعة والتجارة العالمية", "rate": 0.006, "category": "شرعي مختلط A"},
+    "ORAS": {"name": "اوراسكوم كونستراكشون بي ال سي", "rate": 0.0087, "category": "شرعي مختلط A"},
+    "RACC": {"name": "راية لخدمات مراكز الاتصالات", "rate": 0.02, "category": "شرعي مختلط A"},
+    "SPMD": {"name": "سبيد ميديكال", "rate": 0.00, "category": "شرعي مختلط A"},
+    "ACGC": {"name": "العربية لحليج الأقطان", "rate": 0.0137, "category": "شرعي مختلط B"},
+    "AIDC": {"name": "ارابيا للاستثمار والتنمية", "rate": 0.0033, "category": "شرعي مختلط B"},
+    "AMOC": {"name": "الاسكندرية للزيوت - اموك", "rate": 0.0005, "category": "شرعي مختلط B"},
+    "APSW": {"name": "العربية وبولفارا للغزل والنسيج", "rate": 0.0024, "category": "شرعي مختلط B"},
+    "ARCC": {"name": "العربية للاسمنت", "rate": 0.0202, "category": "شرعي مختلط B"},
+    "ATQA": {"name": "مصر الوطنية للصلب - عتاقة", "rate": 0.0354, "category": "شرعي مختلط B"},
+    "DAPH": {"name": "التعمير والاستشارات الهندسية", "rate": 0.03, "category": "شرعي مختلط B"},
+    "ETRS": {"name": "المصرية لخدمات النقل - ايجيترانس", "rate": 0.012, "category": "شرعي مختلط B"},
+    "GGCC": {"name": "الجيزة للمقاولات", "rate": 0.0027, "category": "شرعي مختلط B"},
+    "GOUR": {"name": "جورميه ايجيبت دوت كوم للاغذية", "rate": 0.0184, "category": "شرعي مختلط B"},
+    "KABO": {"name": "النصر للملابس والمنسوجات - كابو", "rate": 0.0055, "category": "شرعي مختلط B"},
+    "KRDI": {"name": "نهر الخير", "rate": 0.0006, "category": "شرعي مختلط B"},
+    "MCQE": {"name": "مصر للاسمنت قنا", "rate": 0.0322, "category": "شرعي مختلط B"},
+    "MPCO": {"name": "المنصورة للدواجن", "rate": 0.0042, "category": "شرعي مختلط B"},
+    "OCPH": {"name": "اكتوبر فارما", "rate": 0.0111, "category": "شرعي مختلط B"},
+    "ROTO": {"name": "رواد السياحة", "rate": 0.004, "category": "شرعي مختلط B"},
+    "UEFM": {"name": "مطاحن مصر العليا", "rate": 0.0288, "category": "شرعي مختلط B"},
+    "AALR": {"name": "العامة لاستصلاح الاراضي", "rate": 0.0006, "category": "شرعي مختلط C"},
+    "ADCI": {"name": "العربية للادوية والصناعات الكيماوية", "rate": 0.0062, "category": "شرعي مختلط C"},
+    "ALUM": {"name": "العربية للالومنيوم", "rate": 0.00, "category": "شرعي مختلط C"},
+    "AMII": {"name": "العربية للصناعات المعدنية - العربية للمحابس", "rate": 0.009, "category": "شرعي مختلط C"},
+    "CERA": {"name": "سيراميكا ريماس", "rate": 0.0011, "category": "شرعي مختلط C"},
+    "CIRA": {"name": "القاهره للإستثمار والتنمية العقاريه سيرا للتعليم", "rate": 0.0349, "category": "شرعي مختلط C"},
+    "COSG": {"name": "القاهرة للزيوت والصابون", "rate": 0.00, "category": "شرعي مختلط C"},
+    "EEII": {"name": "العربية للصناعات الهندسية", "rate": 0.0016, "category": "شرعي مختلط C"},
+    "EHDR": {"name": "المصريين للاسكان والتنمية والتعمير", "rate": 0.0077, "category": "شرعي مختلط C"},
+    "ELKA": {"name": "القاهرة للاسكان", "rate": 0.0475, "category": "شرعي مختلط C"},
+    "EPPK": {"name": "الاهرام للطباعة و التغليف", "rate": 0.00, "category": "شرعي مختلط C"},
+    "ETEL": {"name": "المصرية للاتصالات", "rate": 0.002, "category": "شرعي مختلط C"},
+    "GTEX": {"name": "جيتكس للاستثمارات التجارية والصناعية", "rate": 0.0042, "category": "شرعي مختلط C"},
+    "GTWL": {"name": "جولدن تكس للاصواف", "rate": 0.0011, "category": "شرعي مختلط C"},
+    "HBCO": {"name": "هيبكو للاستثمارات التجارية", "rate": 0.00, "category": "شرعي مختلط C"},
+    "ISPH": {"name": "ابن سينا فارما", "rate": 0.0001, "category": "شرعي مختلط C"},
+    "KORA": {"name": "قره لمشروعات الطاقة والاستثمار", "rate": 0.0031, "category": "شرعي مختلط C"},
+    "MAAL": {"name": "مرسيليا المصرية الخليجية", "rate": 0.0117, "category": "شرعي مختلط C"},
+    "MBEG": {"name": "ام بي للهندسة M.B", "rate": 0.0005, "category": "شرعي مختلط C"},
+    "MCRO": {"name": "ماكرو جروب للمستحضرات الطبية", "rate": 0.0408, "category": "شرعي مختلط C"},
+    "MPCI": {"name": "ممفيس للادوية والصناعات الكيماوية", "rate": 0.0487, "category": "شرعي مختلط C"},
+    "NIPH": {"name": "النيل للادوية والصناعات الكيماوية - النيل", "rate": 0.0039, "category": "شرعي مختلط C"},
+    "ORWE": {"name": "النساجون الشرقيون للسجاد", "rate": 0.0187, "category": "شرعي مختلط C"},
+    "RUBX": {"name": "روبكس العالميه لتصنيع البلاستيك", "rate": 0.0003, "category": "شرعي مختلط C"},
+    "SKPC": {"name": "سيدي كرير للبتروكيماويات - سيدبك", "rate": 0.034, "category": "شرعي مختلط C"},
+    "SUCE": {"name": "السويس للاسمنت", "rate": 0.0025, "category": "شرعي مختلط C"},
+    "SVCE": {"name": "جنوب الوادي للاسمنت", "rate": 0.0075, "category": "شرعي مختلط C"},
+    "SWDY": {"name": "السويدي الكتريك", "rate": 0.0086, "category": "شرعي مختلط C"},
+    "TALM": {"name": "تعليم لخدمات الإدارة", "rate": 0.0118, "category": "شرعي مختلط C"},
+    "PRDC": {"name": "بايونيرز بروبرتيز للتنمية العمرانية بي ار اي جروب", "rate": 0.00, "category": "متوافق"},
+}
+
 DEFAULT_STOCKS = [
     {"icon": "⚙️", "name": "العربية للصناعات الهندسية", "ticker": "EEII", "qty": 24372, "avg": 2.2904, "fallback_price": 2.35, "target_price": 2.60},
     {"icon": "🌾", "name": "نهر الخير للتنمية والاستثمار", "ticker": "KRDI", "qty": 123690, "avg": 0.4159, "fallback_price": 0.449, "target_price": 0.52},
@@ -20,29 +115,6 @@ DEFAULT_STOCKS = [
     {"icon": "💎", "name": "العز سيراميك (الجوهرة)", "ticker": "ECAP", "qty": 365, "avg": 34.4619, "fallback_price": 33.62, "target_price": 38.00},
     {"icon": "🔩", "name": "مصر الوطنية للصلب (عتاقة)", "ticker": "ATQA", "qty": 592, "avg": 12.6712, "fallback_price": 12.17, "target_price": 14.00},
     {"icon": "🛢️", "name": "أموك للزيوت المعدنية", "ticker": "AMOC", "qty": 449, "avg": 7.9226, "fallback_price": 13.50, "target_price": 15.00},
-]
-
-PURIFY_RATES = {
-    "EEII": 0.012,
-    "KRDI": 0.008,
-    "ELKA": 0.0,
-    "CERA": 0.015,
-    "EHDR": 0.0,
-    "ECAP": 0.021,
-    "ATQA": 0.0,
-    "AMOC": 0.011,
-}
-
-# قائمة الأسهم الشرعية المعتمدة للمضاربة مع نسب التطهير
-SHARIAH_WATCHLIST = [
-    {"ticker": "KRDI", "name": "نهر الخير للتنمية", "purify": 0.008, "price": 0.45},
-    {"ticker": "EEII", "name": "العربية للصناعات الهندسية", "purify": 0.012, "price": 2.35},
-    {"ticker": "CERA", "name": "سيراميكا ريماس", "purify": 0.015, "price": 1.50},
-    {"ticker": "ELKA", "name": "القاهرة للإسكان", "purify": 0.0, "price": 1.87},
-    {"ticker": "EHDR", "name": "المصريين للإسكان", "purify": 0.0, "price": 2.88},
-    {"ticker": "AMOC", "name": "أموك للزيوت", "purify": 0.011, "price": 13.50},
-    {"ticker": "ATQA", "name": "مصر الوطنية للصلب (عتاقة)", "purify": 0.0, "price": 12.17},
-    {"ticker": "ECAP", "name": "العز سيراميك (الجوهرة)", "purify": 0.021, "price": 33.62},
 ]
 
 PARTNERS = [
@@ -206,11 +278,17 @@ for s in st.session_state.db["stocks"]:
     item["change"] = market_info["change"]
     portfolio_data.append(item)
     
+    # حساب مبالغ التطهير: لو السهم غير مدرج في كاشف، يتم اعتبار التطهير 100% من أرباحه بالكامل
     s_cost = s["qty"] * s["avg"]
     s_val = s["qty"] * market_info["price"]
     s_pnl = s_val - s_cost
-    s_rate = PURIFY_RATES.get(s["ticker"], 0.0)
-    if s_pnl > 0 and s_rate > 0:
+    
+    if s["ticker"] in SHARIAH_ALL_STOCKS:
+        s_rate = SHARIAH_ALL_STOCKS[s["ticker"]]["rate"]
+    else:
+        s_rate = 1.0  # 100% تطهير للأرباح للأسهم غير المتوافقة
+        
+    if s_pnl > 0:
         total_purify_due += (s_pnl * s_rate)
 
 df = pd.DataFrame(portfolio_data)
@@ -251,6 +329,7 @@ menu = st.selectbox(
         "📈 الفوليوم والتنبيهات", 
         "📝 تسجيل الصفقات والتسوية", 
         "⚖️ التطهير الشرعي", 
+        "📜 الدليل الشرعي لأسهم كاشف",
         "📰 أخبار البورصة", 
         "🤖 مساعد التداول", 
         "💵 إدارة الكاش والنسخ الاحتياطي"
@@ -285,22 +364,21 @@ if menu == "📊 الأسهم والمحفظة":
             st.markdown(f":{color_delta}[**الربح / الخسارة الدفترية:** {pnl:+,.2f} ج.م ({ret:+.2f}%)]")
             st.divider()
 
-# 2. شاشة فرص وتوصيات الجلسة القادمة (القسم الجديد)
+# 2. شاشة فرص وتوصيات الجلسة القادمة
 elif menu == "🎯 فرص وتوصيات الجلسة القادمة":
     st.markdown("### 🎯 أفضل فرصتين مضاربيتين لجلسة الغد")
-    st.caption("تم اختيار الفرص بدقة من قائمة الأسهم الشرعية المعتمدة بناءً على طفرات الفوليوم وحركة السعر:")
+    st.caption("مختارة حصراً من قائمة كاشف المتوافقة مع الشريعة الإسلامية بناءً على الفوليوم والسيولة:")
     
-    # بطاقة التوصية الأولى
     with st.container():
         st.markdown("""
         <div style="background-color: #162235; border: 1px solid #38bdf8; border-radius: 12px; padding: 14px; margin-bottom: 12px;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="color: #f8fafc; font-weight: bold; font-size: 16px;">🌾 نهر الخير للتنمية (KRDI)</span>
+                <span style="color: #f8fafc; font-weight: bold; font-size: 16px;">🌾 نهر الخير (KRDI)</span>
                 <span style="background: #0369a1; color: #e0f2fe; padding: 2px 8px; border-radius: 6px; font-size: 12px;">فرصة مضاربة 1</span>
             </div>
             <div style="color: #94a3b8; font-size: 13px; margin: 8px 0;">
-                🔹 <b>سلوك الفوليوم:</b> تجميع كثيف مع امتصاص عروض بيع بأحجام تخطت 60 مليون سهم قرب دعم القاع.<br>
-                🔹 <b>الموقف الشرعي:</b> سهم متوافق (نسبة التطهير: 0.8% من الأرباح).
+                🔹 <b>حركة الفوليوم:</b> امتصاص بيعي وتجميع قوي جداً قرب القاع مع سيولة تخطت 60 مليون سهم.<br>
+                🔹 <b>الموقف الشرعي (كاشف):</b> شرعي مختلط B (نسبة التطهير: <b>0.06%</b> فقط من الأرباح).
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; background: #0f172a; padding: 10px; border-radius: 8px;">
                 <div>نقطة الدخول المقترحة: <b style="color: #38bdf8;">0.445 - 0.450 ج.م</b></div>
@@ -311,7 +389,6 @@ elif menu == "🎯 فرص وتوصيات الجلسة القادمة":
         </div>
         """, unsafe_allow_html=True)
         
-    # بطاقة التوصية الثانية
     with st.container():
         st.markdown("""
         <div style="background-color: #162235; border: 1px solid #38bdf8; border-radius: 12px; padding: 14px; margin-bottom: 12px;">
@@ -320,8 +397,8 @@ elif menu == "🎯 فرص وتوصيات الجلسة القادمة":
                 <span style="background: #0369a1; color: #e0f2fe; padding: 2px 8px; border-radius: 6px; font-size: 12px;">فرصة مضاربة 2</span>
             </div>
             <div style="color: #94a3b8; font-size: 13px; margin: 8px 0;">
-                🔹 <b>سلوك الفوليوم:</b> تناقص بيعي ملحوظ مع ثبات أعلى الدعم اللحظي، جاهز لانطلاقة سريعة.<br>
-                🔹 <b>الموقف الشرعي:</b> سهم متوافق (نسبة التطهير: 1.2% من الأرباح).
+                🔹 <b>حركة الفوليوم:</b> تناقص بيعي مع ثبات ملحوظ فوق الدعم اللحظي وتماسك إيجابي.<br>
+                🔹 <b>الموقف الشرعي (كاشف):</b> شرعي مختلط C (نسبة التطهير: <b>0.16%</b> من الأرباح).
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; background: #0f172a; padding: 10px; border-radius: 8px;">
                 <div>نقطة الدخول المقترحة: <b style="color: #38bdf8;">2.32 - 2.35 ج.م</b></div>
@@ -337,12 +414,12 @@ elif menu == "👥 حسابات الشركاء والأرباح":
     st.markdown("### 👥 توزيع الشركاء وحصص الأرباح (بعد خصم التطهير)")
     total_partner_capital = sum(p["capital"] for p in PARTNERS)
     gross_profit = net_pnl + st.session_state.db.get("realized_pnl", 0.0)
-    net_distributable_profit = gross_profit - total_purify_due
+    net_distributable_profit = max(0.0, gross_profit - total_purify_due) if gross_profit > 0 else (gross_profit - total_purify_due)
     
     st.markdown(f"""
     <div style="background: linear-gradient(135deg, #1e1b4b, #2e1065); border: 1px solid #7c3aed; border-radius: 14px; padding: 16px; margin-bottom: 16px; text-align: center;">
         <div style="color: #c4b5fd; font-size: 13px;">رأس المال الأصلي الموزع: <b>{total_partner_capital:,.2f} ج.م</b></div>
-        <div style="color: #94a3b8; font-size: 12px; margin-top: 4px;">إجمالي الأرباح: {gross_profit:+,.2f} ج.م | التطهير المخصوم: -{total_purify_due:,.2f} ج.م</div>
+        <div style="color: #94a3b8; font-size: 12px; margin-top: 4px;">إجمالي الأرباح الكلية: {gross_profit:+,.2f} ج.م | التطهير المخصوم بالكامل: -{total_purify_due:,.2f} ج.م</div>
         <div style="color: #34d399; font-size: 20px; font-weight: 800; margin-top: 6px;">
             صافي الربح الحلال للتوزيع: {net_distributable_profit:+,.2f} ج.م
         </div>
@@ -477,38 +554,69 @@ elif menu == "📝 تسجيل الصفقات والتسوية":
         for tr in reversed(st.session_state.db["trades"][-6:]):
             st.markdown(f"• **{tr['type']}** {tr['qty']:,} في `{tr['ticker']}` بسعر {tr['price']:.3f} ج.م (عمولة فعلية: {tr.get('fee', 0):.2f} ج.م) | ⏳ تسوية: `{tr['settle_date']}`")
 
-# 7. شاشة التطهير الشرعي
+# 7. شاشة التطهير الشرعي مع قاعدة 100% تطهير للأسهم الخارجة عن كاشف
 elif menu == "⚖️ التطهير الشرعي":
-    st.markdown("### ⚖️ الموقف الشرعي ومبالغ التطهير المستحقة")
+    st.markdown("### ⚖️ الموقف الشرعي ومبالغ التطهير المستحقة (كاشف)")
     for _, row in df.iterrows():
         val = row["qty"] * row["price"]
         cost = row["qty"] * row["avg"]
         pnl = val - cost
-        rate = PURIFY_RATES.get(row["ticker"], 0.0)
+        
+        is_shariah = row["ticker"] in SHARIAH_ALL_STOCKS
+        if is_shariah:
+            info = SHARIAH_ALL_STOCKS[row["ticker"]]
+            rate = info["rate"]
+            cat = info["category"]
+        else:
+            rate = 1.0  # خارج الشريعة بالكامل
+            cat = "خارج الشريعة (غير مدرج في كاشف)"
+            
         purify_amt = (pnl * rate) if (pnl > 0 and rate > 0) else 0.0
         
         with st.container():
             st.markdown(f"**{row['icon']} {row['name']}** (`{row['ticker']}`)")
-            if rate == 0.0:
-                st.success("🟢 سهم نقي شرعاً 100% (لا يستوجب تطهير)")
+            if not is_shariah:
+                st.error("🔴 **سهم غير متوافق شرعاً:** غير مدرج في كاشف - نسبة التطهير: **100% من كامل الأرباح**")
+            elif rate == 0.0:
+                st.success(f"🟢 درجة النقاء: **{cat}** (لا يستوجب تطهير)")
             else:
-                st.warning(f"🟡 سهم مختلط - نسبة التطهير: **{rate * 100:.1f}%**")
-                c1, c2 = st.columns(2)
-                c1.caption(f"الأرباح السوقية: **{pnl:+,.2f} ج.م**")
-                if pnl > 0:
-                    c2.markdown(f"💸 **مستحق التطهير:** `{purify_amt:,.2f} ج.م`")
-                else:
-                    c2.caption("لا يستحق تطهير (المركز في خسارة/تعادل)")
+                st.warning(f"🟡 درجة النقاء: **{cat}** - نسبة التطهير: **{rate * 100:.2f}%**")
+                
+            c1, c2 = st.columns(2)
+            c1.caption(f"الأرباح السوقية: **{pnl:+,.2f} ج.م**")
+            if pnl > 0:
+                c2.markdown(f"💸 **مستحق التطهير:** `{purify_amt:,.2f} ج.م`")
+            else:
+                c2.caption("لا يستحق تطهير (المركز في خسارة/تعادل)")
             st.divider()
             
     st.markdown(f"""
     <div style="background-color: #1e1b4b; border: 1px solid #6366f1; border-radius: 12px; padding: 14px; text-align: center;">
-        <div style="color: #c7d2fe; font-size: 13px;">إجمالي مبالغ التطهير المستحقة على أرباح المحفظة</div>
+        <div style="color: #c7d2fe; font-size: 13px;">إجمالي مبالغ التطهير المستحقة على أرباح المحفظة الحالية</div>
         <div style="color: #fb923c; font-size: 22px; font-weight: bold; margin-top: 4px;">{total_purify_due:,.2f} ج.م</div>
     </div>
     """, unsafe_allow_html=True)
 
-# 8. شاشة الأخبار
+# 8. شاشة الدليل الشرعي الكامل لكاشف
+elif menu == "📜 الدليل الشرعي لأسهم كاشف":
+    st.markdown("### 📜 دليل الأسهم الحلال المعتمدة (كاشف)")
+    st.caption("جميع الأسهم المصرح بالمضاربة عليها ونسب تطهيرها الرسمية:")
+    
+    search_q = st.text_input("🔍 ابحث عن سهم برمز السهم أو الاسم:", "")
+    
+    items = []
+    for ticker, val in SHARIAH_ALL_STOCKS.items():
+        if search_q == "" or search_q.upper() in ticker or search_q in val["name"]:
+            items.append({
+                "الرمز": ticker,
+                "الشركة": val["name"],
+                "التصنيف": val["category"],
+                "نسبة التطهير": f"{val['rate'] * 100:.2f}%"
+            })
+            
+    st.dataframe(pd.DataFrame(items), use_container_width=True, hide_index=True)
+
+# 9. شاشة الأخبار
 elif menu == "📰 أخبار البورصة":
     st.markdown("### 📰 أحدث الإفصاحات وأخبار الأسهم")
     for _, row in df.iterrows():
@@ -520,7 +628,7 @@ elif menu == "📰 أخبار البورصة":
             else:
                 st.caption("لا توجد إفصاحات جديدة اليوم.")
 
-# 9. شاشة البوت
+# 10. شاشة البوت
 elif menu == "🤖 مساعد التداول":
     st.markdown("### 🤖 مساعد التداول الذكي")
     api_key = st.text_input("أدخل مفتاح Gemini API:", type="password")
@@ -539,17 +647,14 @@ elif menu == "🤖 مساعد التداول":
                 st.write(user_q)
             
             portfolio_summary = df[["ticker", "name", "qty", "avg", "price", "volume", "weight"]].to_string()
-            watchlist_summary = str(SHARIAH_WATCHLIST)
             prompt = f"""
             أنت خبير ومحلل مالي للبورصة المصرية لمحفظة تيلدا.
-            الأسهم المتوافقة مع الشريعة المعتمدة للتحليل:
-            {watchlist_summary}
-            
+            المعيار الشرعي: أنت مقيد حصراً بقائمة الأسهم الحلال المعتمدة من منصة كاشف. أي سهم خارج كاشف تطهيره 100% من الأرباح ولا نوصي به.
             بيانات المحفظة الحالية:
             {portfolio_summary}
             
             سؤال المستخدم: {user_q}
-            قدم تحليلك بناءً على حركة السعر، الفوليوم، ونقاط الدخول والخروج الصارمة.
+            قدم تحليلك بالعامية المصرية باختصار ووضوح، وركز على أحجام التداول (الفوليوم)، الدعوم، والمقاومات.
             """
             try:
                 client = genai.Client(api_key=api_key)
@@ -574,7 +679,7 @@ elif menu == "🤖 مساعد التداول":
                 except Exception as e:
                     st.error(f"حدث خطأ: {e}")
 
-# 10. شاشة الكاش والنسخ الاحتياطي
+# 11. شاشة الكاش والنسخ الاحتياطي
 elif menu == "💵 إدارة الكاش والنسخ الاحتياطي":
     st.markdown("### 💵 إدارة الكاش والمصاريف")
     with st.form("cash_form"):
