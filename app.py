@@ -1,181 +1,144 @@
 import streamlit as st
 import pandas as pd
-import requests
-from bs4 import BeautifulSoup
 import datetime
 
-# إعداد الصفحة وتفعيل اتجاه اليمين لليسار
-st.set_page_config(page_title="محفظتي - البورصة المصرية والمصاريف", layout="wide", initial_sidebar_state="expanded")
+# إعداد الصفحة وتناسب شاشات الهواتف
+st.set_page_config(page_title="محفظتي", layout="centered", initial_sidebar_state="collapsed")
 
+# تصميم مخصص للموبايل بواجهة عربية نظيفة
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
-    html, body, [class*="css"] {
-        font-family: 'Cairo', sans-serif;
-        direction: rtl;
-        text-align: right;
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@500;700&display=swap');
+    * { font-family: 'Cairo', sans-serif !important; direction: rtl; text-align: right; }
+    .block-container { padding: 1rem !important; }
+    .card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.04);
     }
-    .stMetric {
-        background-color: #f8f9fa;
-        padding: 12px;
-        border-radius: 10px;
-        border: 1px solid #e9ecef;
+    .kpi-box {
+        background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+        color: white;
+        border-radius: 14px;
+        padding: 16px;
+        margin-bottom: 16px;
+        text-align: center;
     }
+    .badge-win { color: #16a34a; font-weight: bold; }
+    .badge-loss { color: #dc2626; font-weight: bold; }
     </style>
 """, unsafe_allow_html=True)
 
-# بيانات المحفظة الأساسية
-DEFAULT_PORTFOLIO = [
-    {"name": "العربية للصناعات الهندسية", "ticker": "EEII", "qty": 24372, "avg_cost": 2.2904, "last_price": 2.35},
-    {"name": "نهر الخير للتنمية والاستثمار", "ticker": "KRDI", "qty": 123690, "avg_cost": 0.4159, "last_price": 0.449},
-    {"name": "القاهرة للإسكان والتعمير", "ticker": "ELKA", "qty": 21990, "avg_cost": 1.7544, "last_price": 1.87},
-    {"name": "سيراميكا ريماس", "ticker": "CERA", "qty": 22100, "avg_cost": 1.3159, "last_price": 1.50},
-    {"name": "المصريين للإسكان والتنمية", "ticker": "EHDR", "qty": 9793, "avg_cost": 2.6623, "last_price": 2.88},
-    {"name": "العز سيراميك (الجوهرة)", "ticker": "ECAP", "qty": 365, "avg_cost": 34.4619, "last_price": 33.62},
-    {"name": "مصر الوطنية للصلب (عتاقة)", "ticker": "ATQA", "qty": 592, "avg_cost": 12.6712, "last_price": 12.17},
-    {"name": "أموك للزيوت المعدنية", "ticker": "AMOC", "qty": 449, "avg_cost": 7.9226, "last_price": 13.50},
+# بيانات المحفظة
+DEFAULT_STOCKS = [
+    {"name": "العربية للصناعات الهندسية", "ticker": "EEII", "qty": 24372, "avg": 2.2904, "price": 2.35},
+    {"name": "نهر الخير للتنمية", "ticker": "KRDI", "qty": 123690, "avg": 0.4159, "price": 0.449},
+    {"name": "القاهرة للإسكان والتعمير", "ticker": "ELKA", "qty": 21990, "avg": 1.7544, "price": 1.87},
+    {"name": "سيراميكا ريماس", "ticker": "CERA", "qty": 22100, "avg": 1.3159, "price": 1.50},
+    {"name": "المصريين للإسكان", "ticker": "EHDR", "qty": 9793, "avg": 2.6623, "price": 2.88},
+    {"name": "العز سيراميك (الجوهرة)", "ticker": "ECAP", "qty": 365, "avg": 34.4619, "price": 33.62},
+    {"name": "مصر الوطنية للصلب (عتاقة)", "ticker": "ATQA", "qty": 592, "avg": 12.6712, "price": 12.17},
+    {"name": "أموك للزيوت المعدنية", "ticker": "AMOC", "qty": 449, "avg": 7.9226, "price": 13.50},
 ]
 
 if "portfolio" not in st.session_state:
-    st.session_state.portfolio = pd.DataFrame(DEFAULT_PORTFOLIO)
-
+    st.session_state.portfolio = pd.DataFrame(DEFAULT_STOCKS)
 if "cash" not in st.session_state:
     st.session_state.cash = 0.0
-
 if "expenses" not in st.session_state:
-    st.session_state.expenses = pd.DataFrame(columns=["التاريخ", "النوع", "التصنيف", "المبلغ", "ملاحظات"])
+    st.session_state.expenses = []
 
-# دالة جلب بيانات السوق المباشرة من مباشر
-@st.cache_data(ttl=300)
-def fetch_egx_data(ticker):
-    url = f"https://www.mubasher.info/markets/EGX/stocks/{ticker}"
-    headers = {"User-Agent": "Mozilla/5.0"}
-    try:
-        r = requests.get(url, headers=headers, timeout=5)
-        if r.status_code == 200:
-            soup = BeautifulSoup(r.text, 'html.parser')
-            # استخراج السعر
-            price_elem = soup.find(class_=lambda x: x and 'stock-overview__price' in x)
-            price = float(price_elem.text.strip().replace(',', '')) if price_elem else None
-            return {"price": price, "status": "متصل"}
-    except Exception:
-        pass
-    return {"price": None, "status": "غير متصل"}
+# حساب الإجماليات
+df = st.session_state.portfolio.copy()
+total_cost = (df["qty"] * df["avg"]).sum()
+total_market = (df["qty"] * df["price"]).sum()
+net_pnl = total_market - total_cost
+net_return = (net_pnl / total_cost) * 100 if total_cost > 0 else 0
 
-# دالة التحليل الفني التقديري
-def technical_analysis(cur_price, avg_cost):
-    r_price = cur_price if cur_price else avg_cost
-    support = round(r_price * 0.95, 2)
-    resistance = round(r_price * 1.05, 2)
-    stop_loss = round(r_price * 0.93, 2)
-    trend = "صاعد 🟢" if r_price >= avg_cost else "هابط / تصحيحي 🔴"
-    return support, resistance, stop_loss, trend
+# بطاقة الملخص المالي العلوية
+pnl_color = "#4ade80" if net_pnl >= 0 else "#f87171"
+st.markdown(f"""
+<div class="kpi-box">
+    <div style="font-size: 13px; opacity: 0.9;">إجمالي القيمة السوقية</div>
+    <div style="font-size: 24px; font-weight: bold; margin: 4px 0;">{total_market:,.2f} ج.م</div>
+    <div style="font-size: 14px; color: {pnl_color}; font-weight: bold;">
+        صافي الأرباح: {net_pnl:+,.2f} ج.م ({net_return:+.2f}%)
+    </div>
+    <div style="font-size: 12px; margin-top: 6px; opacity: 0.85;">الكاش المتاح: {st.session_state.cash:,.2f} ج.م</div>
+</div>
+""", unsafe_allow_html=True)
 
-# الشريط الجانبي (التنقل)
-st.sidebar.title("لوحة التحكم 📊")
-menu = st.sidebar.radio("الانتقال إلى:", ["المحفظة الاستثمارية", "التحليل الفني اليومي", "المصاريف والسيولة", "تسجيل عملية جديدة"])
+# أزرار تنقل عريضة في الأعلى للموبايل
+tab1, tab2, tab3 = st.tabs(["📊 الأسهم والمحفظة", "📈 التحليل الفني", "💵 المصاريف والكاش"])
 
-# 1. شاشة المحفظة
-if menu == "المحفظة الاستثمارية":
-    st.title("محفظة الأسهم المصرية 🇪🇬")
-    
-    col_btn, _ = st.columns([1, 4])
-    if col_btn.button("🔄 تحديث أسعار السوق الآن"):
-        st.cache_data.clear()
-        st.rerun()
-
-    df = st.session_state.portfolio.copy()
-    
-    # حساب القيم
-    df["القيمة الشرائية"] = df["qty"] * df["avg_cost"]
-    df["السعر الحالي"] = df["last_price"]
-    df["القيمة السوقية"] = df["qty"] * df["السعر الحالي"]
-    df["الربح / الخسارة"] = df["القيمة السوقية"] - df["القيمة الشرائية"]
-    df["العائد %"] = (df["الربح / الخسارة"] / df["القيمة الشرائية"]) * 100
-
-    tot_cost = df["القيمة الشرائية"].sum()
-    tot_market = df["القيمة السوقية"].sum()
-    tot_pnl = tot_market - tot_cost
-    tot_ret = (tot_pnl / tot_cost) * 100 if tot_cost > 0 else 0.0
-
-    kpi1, kpi2, kpi3, kpi4 = st.columns(4)
-    kpi1.metric("إجمالي القيمة السوقية", f"{tot_market:,.2f} ج.م")
-    kpi2.metric("رأس المال المستثمر", f"{tot_cost:,.2f} ج.م")
-    kpi3.metric("صافي الأرباح", f"{tot_pnl:+,.2f} ج.م", f"{tot_ret:+.2f}%")
-    kpi4.metric("الكاش المتاح", f"{st.session_state.cash:,.2f} ج.م")
-
-    st.subheader("مراكز الأسهم النشطة")
-    display_df = df[["name", "ticker", "qty", "avg_cost", "السعر الحالي", "القيمة السوقية", "الربح / الخسارة", "العائد %"]].copy()
-    display_df.columns = ["اسم الشركة", "الكود", "الكمية", "متوسط الشراء", "السعر الحالي", "القيمة السوقية", "الربح / الخسارة", "العائد %"]
-    st.dataframe(display_df.style.format({
-        "الكمية": "{:,.0f}",
-        "متوسط الشراء": "{:,.4f}",
-        "السعر الحالي": "{:,.2f}",
-        "القيمة السوقية": "{:,.2f} ج.م",
-        "الربح / الخسارة": "{:+,.2f} ج.م",
-        "العائد %": "{:+.2f}%"
-    }), use_container_width=True)
+# 1. شاشة الأسهم بنظام كروت الموبايل
+with tab1:
+    for _, row in df.iterrows():
+        cost = row["qty"] * row["avg"]
+        val = row["qty"] * row["price"]
+        pnl = val - cost
+        ret = (pnl / cost) * 100
+        cls = "badge-win" if pnl >= 0 else "badge-loss"
+        
+        st.markdown(f"""
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: bold; font-size: 15px;">{row['name']}</span>
+                <span style="background: #f1f5f9; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: bold;">{row['ticker']}</span>
+            </div>
+            <hr style="margin: 8px 0; border: none; border-top: 1px solid #f1f5f9;">
+            <div style="font-size: 13px; line-height: 1.8;">
+                <div>الكمية: <b>{row['qty']:,}</b> سهم</div>
+                <div>متوسط الشراء: <b>{row['avg']:.4f}</b> ج.م | السعر الحالي: <b>{row['price']:.2f}</b> ج.م</div>
+                <div>القيمة: <b>{val:,.2f}</b> ج.م</div>
+                <div class="{cls}">الربح / الخسارة: {pnl:+,.2f} ج.م ({ret:+.2f}%)</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
 # 2. شاشة التحليل الفني
-elif menu == "التحليل الفني اليومي":
-    st.title("التحليل الفني ومستويات الجلسة 📈")
-    st.info("المستويات محسوبة بناءً على الإغلاقات الحالية وسلوك الأسعار اليومي لدعم اتخاذ القرار.")
-    
-    analysis_data = []
-    for _, row in st.session_state.portfolio.iterrows():
-        sup, res, sl, tr = technical_analysis(row["last_price"], row["avg_cost"])
-        analysis_data.append({
-            "اسم السهم": row["name"],
-            "الكود": row["ticker"],
-            "سعر الإغلاق": row["last_price"],
-            "الاتجاه المتوقع": tr,
-            "الدعم الأول": sup,
-            "المقاومة الأولى": res,
-            "وقف الخسارة المقترح": sl
-        })
-    st.dataframe(pd.DataFrame(analysis_data), use_container_width=True)
+with tab2:
+    st.caption("مستويات الدعم والمقاومة المقترحة:")
+    for _, row in df.iterrows():
+        p = row["price"]
+        sup = round(p * 0.95, 2)
+        res = round(p * 1.05, 2)
+        sl = round(p * 0.93, 2)
+        trend = "صاعد 🟢" if p >= row["avg"] else "تصحيحي 🔴"
+        
+        st.markdown(f"""
+        <div class="card">
+            <div style="font-weight: bold; color: #1e3a8a;">{row['name']} ({row['ticker']})</div>
+            <div style="font-size: 13px; margin-top: 6px;">
+                <div>الاتجاه: <b>{trend}</b></div>
+                <div>الدعم الأول: <b style="color: #16a34a;">{sup} ج.م</b></div>
+                <div>المقاومة الأولى: <b style="color: #ea580c;">{res} ج.م</b></div>
+                <div>وقف الخسارة: <b style="color: #dc2626;">{sl} ج.م</b></div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
-# 3. شاشة المصاريف والسيولة
-elif menu == "المصاريف والسيولة":
-    st.title("حركة الكاش والمصاريف الشخصية 💵")
-    
-    col1, col2 = st.columns(2)
-    col1.metric("رصيد السيولة في المحفظة", f"{st.session_state.cash:,.2f} ج.م")
-    exp_sum = st.session_state.expenses[st.session_state.expenses["النوع"] == "مصروف"]["المبلغ"].sum() if not st.session_state.expenses.empty else 0.0
-    col2.metric("إجمالي المصاريف المسجلة", f"{exp_sum:,.2f} ج.م")
+# 3. شاشة المصاريف والكاش
+with tab3:
+    st.write("### تسجيل حركة نقدية سريعة")
+    with st.form("quick_cash"):
+        action = st.selectbox("نوع الحركة:", ["مصروف شخصي", "إيداع بالمحفظة", "سحب كاش من المحفظة"])
+        amt = st.number_input("المبلغ (ج.م):", min_value=1.0, step=50.0)
+        desc = st.text_input("البيان / التصنيف (مثال: بنزين، خروج، أرباح):")
+        if st.form_submit_button("حفظ المعاملة", use_container_width=True):
+            if action == "إيداع بالمحفظة":
+                st.session_state.cash += amt
+            elif action == "سحب كاش من المحفظة":
+                st.session_state.cash -= amt
+            st.session_state.expenses.append({"التاريخ": str(datetime.date.today()), "النوع": action, "المبلغ": amt, "البيان": desc})
+            st.success("تم الحفظ وتحديث الرصيد!")
+            st.rerun()
 
-    st.subheader("سجل المعاملات")
-    if not st.session_state.expenses.empty:
-        st.dataframe(st.session_state.expenses, use_container_width=True)
-    else:
-        st.info("لا توجد مصاريف أو حركات كاش مسجلة بعد.")
-
-# 4. تسجيل عملية جديدة
-elif menu == "تسجيل عملية جديدة":
-    st.title("تسجيل عملية تداول أو مصروف ✍️")
-    op_type = st.radio("نوع الإدخال:", ["صفقة أسهم (بيع / شراء)", "حركة كاش / مصروف شخصي"], horizontal=True)
-
-    if op_type == "صفقة أسهم (بيع / شراء)":
-        with st.form("trade_form"):
-            selected_ticker = st.selectbox("اختر السهم:", st.session_state.portfolio["ticker"].tolist())
-            action = st.selectbox("نوع الصفقة:", ["شراء", "بيع"])
-            qty = st.number_input("الكمية:", min_value=1, step=10)
-            price = st.number_input("سعر التنفيذ (ج.م):", min_value=0.01, format="%.4f")
-            submitted = st.form_submit_button("تنفيذ وتسجيل الصفقة")
-            if submitted:
-                st.success(f"تم تسجيل صفقة {action} لـ {qty} سهم على {selected_ticker} بسعر {price} ج.م بنجاح!")
-    else:
-        with st.form("cash_form"):
-            cash_action = st.selectbox("نوع الحركة:", ["مصروف شخصي", "إيداع كاش للمحفظة", "سحب كاش من المحفظة"])
-            category = st.text_input("التصنيف (مثال: فواتير، مواصلات، أرباح تداول):")
-            amount = st.number_input("المبلغ (ج.م):", min_value=1.0, step=50.0)
-            notes = st.text_area("ملاحظات:")
-            submitted_cash = st.form_submit_button("حفظ الحركة")
-            if submitted_cash:
-                new_row = {"التاريخ": str(datetime.date.today()), "النوع": cash_action, "التصنيف": category, "المبلغ": amount, "ملاحظات": notes}
-                st.session_state.expenses = pd.concat([st.session_state.expenses, pd.DataFrame([new_row])], ignore_index=True)
-                if cash_action == "إيداع كاش للمحفظة":
-                    st.session_state.cash += amount
-                elif cash_action == "سحب كاش من المحفظة":
-                    st.session_state.cash -= amount
-                st.success("تم تسجيل العملية وتحديث رصيد الكاش فوراً!")
+    if st.session_state.expenses:
+        st.write("---")
+        st.write("### آخر المعاملات:")
+        for exp in reversed(st.session_state.expenses[-5:]):
+            st.caption(f"{exp['التاريخ']} | {exp['النوع']}: {exp['المبلغ']} ج.م ({exp['البيان']})")
