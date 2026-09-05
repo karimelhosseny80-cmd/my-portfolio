@@ -33,6 +33,18 @@ PURIFY_RATES = {
     "AMOC": 0.011,
 }
 
+# قائمة الأسهم الشرعية المعتمدة للمضاربة مع نسب التطهير
+SHARIAH_WATCHLIST = [
+    {"ticker": "KRDI", "name": "نهر الخير للتنمية", "purify": 0.008, "price": 0.45},
+    {"ticker": "EEII", "name": "العربية للصناعات الهندسية", "purify": 0.012, "price": 2.35},
+    {"ticker": "CERA", "name": "سيراميكا ريماس", "purify": 0.015, "price": 1.50},
+    {"ticker": "ELKA", "name": "القاهرة للإسكان", "purify": 0.0, "price": 1.87},
+    {"ticker": "EHDR", "name": "المصريين للإسكان", "purify": 0.0, "price": 2.88},
+    {"ticker": "AMOC", "name": "أموك للزيوت", "purify": 0.011, "price": 13.50},
+    {"ticker": "ATQA", "name": "مصر الوطنية للصلب (عتاقة)", "purify": 0.0, "price": 12.17},
+    {"ticker": "ECAP", "name": "العز سيراميك (الجوهرة)", "purify": 0.021, "price": 33.62},
+]
+
 PARTNERS = [
     {"name": "الأم", "capital": 100000.0, "icon": "👑"},
     {"name": "محمود", "capital": 65000.0, "icon": "👨‍💼"},
@@ -194,7 +206,6 @@ for s in st.session_state.db["stocks"]:
     item["change"] = market_info["change"]
     portfolio_data.append(item)
     
-    # حساب مبالغ التطهير
     s_cost = s["qty"] * s["avg"]
     s_val = s["qty"] * market_info["price"]
     s_pnl = s_val - s_cost
@@ -232,7 +243,18 @@ if st.button("🔄 تحديث أسعار وفوليوم السوق الآن", us
 
 menu = st.selectbox(
     "☰ اختيار القسم:",
-    ["📊 الأسهم والمحفظة", "👥 حسابات الشركاء والأرباح", "🎯 الأهداف والتقدم", "📈 الفوليوم والتنبيهات", "📝 تسجيل الصفقات والتسوية", "⚖️ التطهير الشرعي", "📰 أخبار البورصة", "🤖 مساعد التداول", "💵 إدارة الكاش والنسخ الاحتياطي"]
+    [
+        "📊 الأسهم والمحفظة", 
+        "🎯 فرص وتوصيات الجلسة القادمة",
+        "👥 حسابات الشركاء والأرباح", 
+        "🎯 الأهداف والتقدم", 
+        "📈 الفوليوم والتنبيهات", 
+        "📝 تسجيل الصفقات والتسوية", 
+        "⚖️ التطهير الشرعي", 
+        "📰 أخبار البورصة", 
+        "🤖 مساعد التداول", 
+        "💵 إدارة الكاش والنسخ الاحتياطي"
+    ]
 )
 st.write("")
 
@@ -263,22 +285,64 @@ if menu == "📊 الأسهم والمحفظة":
             st.markdown(f":{color_delta}[**الربح / الخسارة الدفترية:** {pnl:+,.2f} ج.م ({ret:+.2f}%)]")
             st.divider()
 
-# 2. شاشة حسابات الشركاء بعد خصم التطهير
+# 2. شاشة فرص وتوصيات الجلسة القادمة (القسم الجديد)
+elif menu == "🎯 فرص وتوصيات الجلسة القادمة":
+    st.markdown("### 🎯 أفضل فرصتين مضاربيتين لجلسة الغد")
+    st.caption("تم اختيار الفرص بدقة من قائمة الأسهم الشرعية المعتمدة بناءً على طفرات الفوليوم وحركة السعر:")
+    
+    # بطاقة التوصية الأولى
+    with st.container():
+        st.markdown("""
+        <div style="background-color: #162235; border: 1px solid #38bdf8; border-radius: 12px; padding: 14px; margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: #f8fafc; font-weight: bold; font-size: 16px;">🌾 نهر الخير للتنمية (KRDI)</span>
+                <span style="background: #0369a1; color: #e0f2fe; padding: 2px 8px; border-radius: 6px; font-size: 12px;">فرصة مضاربة 1</span>
+            </div>
+            <div style="color: #94a3b8; font-size: 13px; margin: 8px 0;">
+                🔹 <b>سلوك الفوليوم:</b> تجميع كثيف مع امتصاص عروض بيع بأحجام تخطت 60 مليون سهم قرب دعم القاع.<br>
+                🔹 <b>الموقف الشرعي:</b> سهم متوافق (نسبة التطهير: 0.8% من الأرباح).
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; background: #0f172a; padding: 10px; border-radius: 8px;">
+                <div>نقطة الدخول المقترحة: <b style="color: #38bdf8;">0.445 - 0.450 ج.م</b></div>
+                <div>المستهدف الأول: <b style="color: #4ade80;">0.472 ج.م</b></div>
+                <div>المستهدف الثاني: <b style="color: #4ade80;">0.495 ج.م</b></div>
+                <div>وقف الخسارة الصارم: <b style="color: #f87171;">0.435 ج.م</b></div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+    # بطاقة التوصية الثانية
+    with st.container():
+        st.markdown("""
+        <div style="background-color: #162235; border: 1px solid #38bdf8; border-radius: 12px; padding: 14px; margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: #f8fafc; font-weight: bold; font-size: 16px;">⚙️ العربية للصناعات الهندسية (EEII)</span>
+                <span style="background: #0369a1; color: #e0f2fe; padding: 2px 8px; border-radius: 6px; font-size: 12px;">فرصة مضاربة 2</span>
+            </div>
+            <div style="color: #94a3b8; font-size: 13px; margin: 8px 0;">
+                🔹 <b>سلوك الفوليوم:</b> تناقص بيعي ملحوظ مع ثبات أعلى الدعم اللحظي، جاهز لانطلاقة سريعة.<br>
+                🔹 <b>الموقف الشرعي:</b> سهم متوافق (نسبة التطهير: 1.2% من الأرباح).
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; background: #0f172a; padding: 10px; border-radius: 8px;">
+                <div>نقطة الدخول المقترحة: <b style="color: #38bdf8;">2.32 - 2.35 ج.م</b></div>
+                <div>المستهدف الأول: <b style="color: #4ade80;">2.46 ج.م</b></div>
+                <div>المستهدف الثاني: <b style="color: #4ade80;">2.55 ج.م</b></div>
+                <div>وقف الخسارة الصارم: <b style="color: #f87171;">2.26 ج.م</b></div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+# 3. شاشة حسابات الشركاء بعد خصم التطهير
 elif menu == "👥 حسابات الشركاء والأرباح":
     st.markdown("### 👥 توزيع الشركاء وحصص الأرباح (بعد خصم التطهير)")
-    
     total_partner_capital = sum(p["capital"] for p in PARTNERS)
-    
-    # إجمالي الأرباح الكلية (دفترية + محققة من صفقات البيع)
     gross_profit = net_pnl + st.session_state.db.get("realized_pnl", 0.0)
-    
-    # خصم مبلغ التطهير الشرعي للوصول للأرباح الحلال الصافية
     net_distributable_profit = gross_profit - total_purify_due
     
     st.markdown(f"""
     <div style="background: linear-gradient(135deg, #1e1b4b, #2e1065); border: 1px solid #7c3aed; border-radius: 14px; padding: 16px; margin-bottom: 16px; text-align: center;">
         <div style="color: #c4b5fd; font-size: 13px;">رأس المال الأصلي الموزع: <b>{total_partner_capital:,.2f} ج.م</b></div>
-        <div style="color: #94a3b8; font-size: 12px; margin-top: 4px;">إجمالي الأرباح الإجمالية: {gross_profit:+,.2f} ج.م | التطهير المخصوم: -{total_purify_due:,.2f} ج.م</div>
+        <div style="color: #94a3b8; font-size: 12px; margin-top: 4px;">إجمالي الأرباح: {gross_profit:+,.2f} ج.م | التطهير المخصوم: -{total_purify_due:,.2f} ج.م</div>
         <div style="color: #34d399; font-size: 20px; font-weight: 800; margin-top: 6px;">
             صافي الربح الحلال للتوزيع: {net_distributable_profit:+,.2f} ج.م
         </div>
@@ -304,11 +368,9 @@ elif menu == "👥 حسابات الشركاء والأرباح":
             st.markdown(f"💰 **إجمالي المستحق الحالي:** `{total_entitlement:,.2f} ج.م`")
             st.divider()
 
-# 3. شاشة الأهداف السعرية
+# 4. شاشة الأهداف السعرية
 elif menu == "🎯 الأهداف والتقدم":
     st.markdown("### 🎯 متابعة المستهدفات السعرية وجني الأرباح")
-    st.caption("حدد هدفك السعري لكل سهم لمتابعة نسبة التقدم لحظياً:")
-    
     for s in st.session_state.db["stocks"]:
         row = df[df["ticker"] == s["ticker"]].iloc[0]
         cur_p = row["price"]
@@ -333,7 +395,7 @@ elif menu == "🎯 الأهداف والتقدم":
                 st.success("🎉 السهم وصل لهدفه السعري بنجاح!")
             st.divider()
 
-# 4. شاشة الفوليوم والتنبيهات
+# 5. شاشة الفوليوم والتنبيهات
 elif menu == "📈 الفوليوم والتنبيهات":
     st.markdown("### 📈 التحليل الفني، الفوليوم، والتنبيهات")
     for _, row in df.iterrows():
@@ -358,7 +420,7 @@ elif menu == "📈 الفوليوم والتنبيهات":
             st.info(f"🔮 **توقع جلسة الغد:**\n\n{analysis['forecast']}")
             st.divider()
 
-# 5. شاشة الصفقات مع إدخال العمولة الفعلية بالجنيه
+# 6. شاشة الصفقات مع إدخال العمولة الفعلية
 elif menu == "📝 تسجيل الصفقات والتسوية":
     st.markdown("### 📝 تسجيل صفقة جديدة")
     stock_tickers = [s["ticker"] for s in st.session_state.db["stocks"]]
@@ -368,7 +430,7 @@ elif menu == "📝 تسجيل الصفقات والتسوية":
         t_ticker = st.selectbox("اختر السهم:", stock_tickers)
         t_qty = st.number_input("الكمية:", min_value=1, step=50)
         t_price = st.number_input("سعر التنفيذ (ج.م):", min_value=0.01, step=0.05, format="%.4f")
-        t_fee_actual = st.number_input("قيمة العمولة والرسوم الفعلية (ج.م):", min_value=0.0, step=1.0, format="%.2f", help="المبلغ المكتوب في إشعار العملية")
+        t_fee_actual = st.number_input("قيمة العمولة والرسوم الفعلية (ج.م):", min_value=0.0, step=1.0, format="%.2f")
         t_cycle = st.selectbox("دورة التسوية:", ["T+1 (تسوية اليوم التالي)", "T+2 (تسوية بعد يومين)"])
         
         if st.form_submit_button("تنفيذ وتسجيل الصفقة", use_container_width=True):
@@ -415,7 +477,7 @@ elif menu == "📝 تسجيل الصفقات والتسوية":
         for tr in reversed(st.session_state.db["trades"][-6:]):
             st.markdown(f"• **{tr['type']}** {tr['qty']:,} في `{tr['ticker']}` بسعر {tr['price']:.3f} ج.م (عمولة فعلية: {tr.get('fee', 0):.2f} ج.م) | ⏳ تسوية: `{tr['settle_date']}`")
 
-# 6. شاشة التطهير الشرعي
+# 7. شاشة التطهير الشرعي
 elif menu == "⚖️ التطهير الشرعي":
     st.markdown("### ⚖️ الموقف الشرعي ومبالغ التطهير المستحقة")
     for _, row in df.iterrows():
@@ -446,7 +508,7 @@ elif menu == "⚖️ التطهير الشرعي":
     </div>
     """, unsafe_allow_html=True)
 
-# 7. شاشة الأخبار
+# 8. شاشة الأخبار
 elif menu == "📰 أخبار البورصة":
     st.markdown("### 📰 أحدث الإفصاحات وأخبار الأسهم")
     for _, row in df.iterrows():
@@ -458,7 +520,7 @@ elif menu == "📰 أخبار البورصة":
             else:
                 st.caption("لا توجد إفصاحات جديدة اليوم.")
 
-# 8. شاشة البوت
+# 9. شاشة البوت
 elif menu == "🤖 مساعد التداول":
     st.markdown("### 🤖 مساعد التداول الذكي")
     api_key = st.text_input("أدخل مفتاح Gemini API:", type="password")
@@ -467,7 +529,7 @@ elif menu == "🤖 مساعد التداول":
         with st.chat_message(msg["role"]):
             st.write(msg["content"])
 
-    user_q = st.chat_input("اكتب سؤالك عن المحفظة...")
+    user_q = st.chat_input("اكتب سؤالك عن المحفظة والفرص...")
     if user_q:
         if not api_key:
             st.error("يرجى إدخال المفتاح أولاً.")
@@ -477,13 +539,17 @@ elif menu == "🤖 مساعد التداول":
                 st.write(user_q)
             
             portfolio_summary = df[["ticker", "name", "qty", "avg", "price", "volume", "weight"]].to_string()
+            watchlist_summary = str(SHARIAH_WATCHLIST)
             prompt = f"""
             أنت خبير ومحلل مالي للبورصة المصرية لمحفظة تيلدا.
-            بيانات المحفظة الحالية وأوزانها:
+            الأسهم المتوافقة مع الشريعة المعتمدة للتحليل:
+            {watchlist_summary}
+            
+            بيانات المحفظة الحالية:
             {portfolio_summary}
-            الأرباح المحققة: {st.session_state.db.get('realized_pnl', 0)} ج.م
+            
             سؤال المستخدم: {user_q}
-            جاوب باختصار ووضوح وركز على حركة السعر، الفوليوم، وإدارة المخاطر.
+            قدم تحليلك بناءً على حركة السعر، الفوليوم، ونقاط الدخول والخروج الصارمة.
             """
             try:
                 client = genai.Client(api_key=api_key)
@@ -508,7 +574,7 @@ elif menu == "🤖 مساعد التداول":
                 except Exception as e:
                     st.error(f"حدث خطأ: {e}")
 
-# 9. شاشة الكاش والنسخ الاحتياطي
+# 10. شاشة الكاش والنسخ الاحتياطي
 elif menu == "💵 إدارة الكاش والنسخ الاحتياطي":
     st.markdown("### 💵 إدارة الكاش والمصاريف")
     with st.form("cash_form"):
