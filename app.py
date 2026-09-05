@@ -230,7 +230,7 @@ with tab4:
             """
             try:
                 genai.configure(api_key=api_key)
-                model = genai.GenerativeModel("gemini-1.5-flash")
+               model = genai.GenerativeModel("gemini-pro")
                 response = model.generate_content(prompt)
                 ans = response.text
                 with st.chat_message("assistant"):
