@@ -105,7 +105,7 @@ if "expenses" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# تجميع بيانات المحفظة بالأسعار الحية
+# تجميع بيانات المحفظة
 portfolio_data = []
 for s in DEFAULT_STOCKS:
     live_p = get_live_price(s["ticker"], s["fallback_price"])
@@ -161,7 +161,7 @@ with tab1:
         </div>
         """, unsafe_allow_html=True)
 
-# 2. التحليل الفني الديناميكي
+# 2. التحليل الفني
 with tab2:
     st.markdown("<div style='color: #94a3b8; font-size: 13px; margin-bottom: 10px;'>مستويات الدعم والمقاومة والاتجاه الفني (محدثة لحظياً):</div>", unsafe_allow_html=True)
     for _, row in df.iterrows():
@@ -186,7 +186,7 @@ with tab2:
         </div>
         """, unsafe_allow_html=True)
 
-# 3. تبويب الأخبار
+# 3. الأخبار
 with tab3:
     st.markdown("<div style='color: #f8fafc; font-weight: bold; margin-bottom: 10px;'>أحدث إفصاحات وأخبار أسهم المحفظة:</div>", unsafe_allow_html=True)
     for _, row in df.iterrows():
@@ -198,12 +198,11 @@ with tab3:
             else:
                 st.caption("لا توجد أخبار جديدة معلنة اليوم.")
 
-# 4. بوت المستشار الذكي
+# 4. البوت الذكي
 with tab4:
     st.markdown("<div style='color: #f8fafc; font-weight: bold; margin-bottom: 6px;'>🤖 مساعد التداول الذكي</div>", unsafe_allow_html=True)
     st.caption("مربوط بمحفظتك مباشرة؛ اسأله عن تحركات الأسهم أو نصائح التداول.")
     
-    # حقل مفتاح Gemini (يتم إدخاله مرة واحدة أو حفظه)
     api_key = st.text_input("أدخل مفتاح Gemini API المجاني:", type="password")
     
     for msg in st.session_state.messages:
@@ -219,7 +218,6 @@ with tab4:
             with st.chat_message("user"):
                 st.write(user_q)
             
-            # بناء سياق المحفظة للبوت
             portfolio_summary = df[["ticker", "name", "qty", "avg", "price"]].to_string()
             prompt = f"""
             أنت خبير ومحلل مالي في البورصة المصرية ومساعد شخصي للمستخدم.
@@ -230,7 +228,7 @@ with tab4:
             """
             try:
                 genai.configure(api_key=api_key)
-               model = genai.GenerativeModel("gemini-pro")
+                model = genai.GenerativeModel("gemini-pro")
                 response = model.generate_content(prompt)
                 ans = response.text
                 with st.chat_message("assistant"):
@@ -239,7 +237,7 @@ with tab4:
             except Exception as e:
                 st.error(f"حدث خطأ: {e}")
 
-# 5. شاشة المصاريف والكاش
+# 5. الكاش والمصاريف
 with tab5:
     st.markdown("<div style='color: #f8fafc; font-weight: bold; margin-bottom: 8px;'>تسجيل حركة كاش أو مصروف</div>", unsafe_allow_html=True)
     with st.form("cash_form"):
