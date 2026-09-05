@@ -95,7 +95,7 @@ def get_live_market_data(ticker, fallback_price):
             if chg_elem:
                 change_pct = chg_elem.text.strip()
             
-            # جلب الفوليوم (حجم التداول)
+            # جلب الفوليوم
             vol_elem = soup.find('div', string=lambda t: t and 'الحجم' in t)
             if vol_elem and vol_elem.find_next_sibling():
                 volume = vol_elem.find_next_sibling().text.strip()
@@ -105,7 +105,7 @@ def get_live_market_data(ticker, fallback_price):
         pass
     return {"price": price, "volume": volume, "change": change_pct}
 
-# دالة توليد تحليل الفوليوم وتوقع الجلسة القادمة ديناميكياً
+# دالة تحليل الفوليوم وتوقع الجلسة
 def analyze_volume_and_forecast(ticker, price, avg):
     ratio = (price - avg) / avg if avg > 0 else 0
     sup = round(price * 0.96, 2)
@@ -113,23 +113,23 @@ def analyze_volume_and_forecast(ticker, price, avg):
     sl = round(price * 0.93, 2)
     
     if ticker == "KRDI":
-        vol_status = "تداول مرتفع جداً (سيولة مضاربية نشطة)"
-        forecast = f"تجميع قرب القاع مع امتصاص عروض البيع. كسر {round(price * 1.03, 3)} بفوليوم متصاعد يستهدف {res} ج.م. الحفاظ على دعم {sup} ج.م شرط استمرار الإيجابية."
+        vol_status = "تداول مرتفع جداً (سيولة مضاربية)"
+        forecast = f"تجميع قرب القاع وامتصاص عروض. اختراق {round(price * 1.03, 3)} بفوليوم متصاعد يستهدف {res} ج.م. الحفاظ على دعم {sup} ج.م شرط استمرار الإيجابية."
     elif ticker == "EEII":
         vol_status = "فوليوم متوازن مع تناقص بيعي"
         forecast = f"تهدئة صحية أعلى متوسط الدخول. اختراق {round(price * 1.025, 2)} بحجم تداول يفتح موجة سريعة نحو {res} ج.م. وقف الخسارة عند {sl} ج.م."
     elif ticker == "AMOC":
         vol_status = "سيولة مؤسسية واستثمار طويل الأجل"
-        forecast = f"سهم أمان المحفظة. أي ضخ فوليوم أعلى مستوى {round(price * 1.02, 2)} يستهدف القمة النفسية {res} ج.م. الدعم الصلب عند {sup} ج.م."
+        forecast = f"سهم أمان المحفظة. أي ضخ فوليوم أعلى {round(price * 1.02, 2)} يستهدف القمة النفسية {res} ج.م. الدعم الصلب عند {sup} ج.م."
     elif ticker in ["ELKA", "EHDR"]:
         vol_status = "تجميع هادئ في قطاع الإسكان"
-        forecast = f"حركة عرضية مائلة للصعود. الثبات فوق {sup} ج.م يؤهل لاختبار مقاومة {res} ج.م بشرط دخول زخم شرائي مع افتتاح الجلسة."
+        forecast = f"حركة عرضية مائلة للصعود. الثبات فوق {sup} ج.م يؤهل لاختبار مقاومة {res} ج.م بشرط استمرار الزخم الشرائي."
     elif ticker == "CERA":
         vol_status = "دوران سيولة جيد وأرباح متماسكة"
-        forecast = f"حماية الأرباح عند مستوى {sup} ج.م، واستهداف مقاومة {res} ج.م للمضاربة السريعة."
+        forecast = f"حماية الأرباح فوق {sup} ج.م، واستهداف مقاومة {res} ج.م للمضاربة السريعة."
     else:
         vol_status = "فوليوم هادئ بانتظار محفزات"
-        forecast = f"حركة عرضية متوقعة بين دعم {sup} ج.م ومقاومة {res} ج.م. يفضل المراقبة قبل زيادة المراكز."
+        forecast = f"حركة عرضية بين دعم {sup} ج.م ومقاومة {res} ج.م. يفضل المراقبة قبل زيادة المراكز."
         
     trend = "صاعد 🟢" if ratio >= 0 else "تصحيحي / هابط 🔴"
     return {"sup": sup, "res": res, "sl": sl, "trend": trend, "vol_status": vol_status, "forecast": forecast}
@@ -220,15 +220,15 @@ with tab1:
         </div>
         """, unsafe_allow_html=True)
 
-# 2. شاشة التحليل الفني وقراءة الفوليوم وتوقع الجلسة القادمة
+# 2. التحليل الفني وقراءة الفوليوم وتوقع الجلسة القادمة (مضبوط بالكامل)
 with tab2:
     st.markdown("<div style='color: #94a3b8; font-size: 13px; margin-bottom: 10px;'>التحليل الفني الديناميكي، قراءة السيولة، وتوقعات الجلسة:</div>", unsafe_allow_html=True)
     for _, row in df.iterrows():
         analysis = analyze_volume_and_forecast(row["ticker"], row["price"], row["avg"])
         
-        st.markdown(f"""
+        card_html = f"""
         <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                 <span class="card-title">{row['icon']} {row['name']}</span>
                 <span class="card-ticker">{row['ticker']}</span>
             </div>
@@ -236,20 +236,21 @@ with tab2:
             <div class="tech-grid">
                 <div class="tech-item">السعر الحالي:<br><span class="tech-val" style="color: #38bdf8;">{row['price']:.2f} ج.م</span></div>
                 <div class="tech-item">الاتجاه الفني:<br><span class="tech-val">{analysis['trend']}</span></div>
-                <div class="tech-item">حجم التداول (Volume):<br><span class="tech-val" style="color: #facc15;">{row['volume']}</span></div>
-                <div class="tech-item">حالة السيولة:<br><span class="tech-val" style="font-size: 12px;">{analysis['vol_status']}</span></div>
+                <div class="tech-item">حجم التداول:<br><span class="tech-val" style="color: #facc15;">{row['volume']}</span></div>
+                <div class="tech-item">حالة السيولة:<br><span class="tech-val" style="font-size: 11px;">{analysis['vol_status']}</span></div>
                 <div class="tech-item">الدعم الأول:<br><span class="tech-val" style="color: #4ade80;">{analysis['sup']:.2f} ج.م</span></div>
                 <div class="tech-item">المقاومة الأولى:<br><span class="tech-val" style="color: #fb923c;">{analysis['res']:.2f} ج.م</span></div>
                 <div class="tech-item" style="grid-column: span 2;">وقف الخسارة المقترح:<br><span class="tech-val" style="color: #f87171;">{analysis['sl']:.2f} ج.م</span></div>
             </div>
             
             <div class="forecast-box">
-                <b>🔮 توقع جلسة الغد:</b><br>{analysis['forecast']}
+                <b style="color: #38bdf8;">🔮 توقع جلسة الغد:</b><br>{analysis['forecast']}
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """
+        st.markdown(card_html, unsafe_allow_html=True)
 
-# 3. شاشة الأخبار
+# 3. الأخبار
 with tab3:
     st.markdown("<div style='color: #f8fafc; font-weight: bold; margin-bottom: 10px;'>أحدث إفصاحات وأخبار أسهم المحفظة:</div>", unsafe_allow_html=True)
     for _, row in df.iterrows():
@@ -261,10 +262,10 @@ with tab3:
             else:
                 st.caption("لا توجد أخبار جديدة معلنة اليوم.")
 
-# 4. بوت المستشار المالي (تفكير عميق وتحليل فوليوم)
+# 4. البوت الذكي
 with tab4:
     st.markdown("<div style='color: #f8fafc; font-weight: bold; margin-bottom: 6px;'>🤖 مساعد التداول الذكي</div>", unsafe_allow_html=True)
-    st.caption("يحلل المحفظة باستخدام أحدث نماذج Gemini مع فحص الفوليوم والسيولة.")
+    st.caption("يحلل المحفظة بناءً على الفوليوم والأسعار الحية.")
     
     api_key = st.text_input("أدخل مفتاح Gemini API المجاني:", type="password")
     
@@ -281,21 +282,14 @@ with tab4:
             with st.chat_message("user"):
                 st.write(user_q)
             
-            # تمرير بيانات الأسعار والفوليوم كاملة للبوت
             portfolio_summary = df[["ticker", "name", "qty", "avg", "price", "volume", "change"]].to_string()
             prompt = f"""
-            أنت خبير محترف ومحلل مالي للبورصة المصرية (EGX).
-            تعتمد في تحليلك على التفكير العميق وتحليل حركة السعر وحجم التداول (Volume Spread Analysis & Price Action).
-            
+            أنت خبير ومحلل مالي محترف في البورصة المصرية (EGX).
+            تعتمد في تحليلك على حركة السعر وأحجام التداول (Price Action & Volume).
             بيانات المحفظة الحية حالياً:
             {portfolio_summary}
-            
             سؤال المستخدم: {user_q}
-            
-            جاوب بدقة بالعامية المصرية الودودة، وركز على:
-            1. قراءة الفوليوم والسيولة للسهم المطلوب.
-            2. مستويات الدعوم والمقاومات الحساسة.
-            3. سيناريو حركة السهم المتوقعة لجلسة الغد.
+            جاوب باختصار ووضوح وباللهجة المصرية، وركز على السيولة، الدعوم والمقاومات، وتوقع الحركة القادمة.
             """
             try:
                 client = genai.Client(api_key=api_key)
@@ -309,7 +303,6 @@ with tab4:
                 st.session_state.messages.append({"role": "assistant", "content": ans})
             except Exception:
                 try:
-                    # محاولة بديلة إذا كان الحساب يدعم إصدار آخر
                     response = client.models.generate_content(
                         model="gemini-3.6-flash",
                         contents=prompt,
