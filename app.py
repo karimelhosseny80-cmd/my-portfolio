@@ -34,29 +34,6 @@ st.markdown("""
     .card-text { color: #cbd5e1 !important; font-size: 13px; line-height: 1.8; }
     .badge-win { color: #4ade80 !important; font-weight: 700; font-size: 14px; }
     .badge-loss { color: #f87171 !important; font-weight: 700; font-size: 14px; }
-    
-    .tech-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-        margin-top: 10px;
-        background: #131722;
-        padding: 12px;
-        border-radius: 10px;
-    }
-    .tech-item { font-size: 13px; color: #94a3b8; }
-    .tech-val { color: #f8fafc; font-weight: 700; font-size: 14px; }
-    
-    .forecast-box {
-        background-color: #162032;
-        border-right: 4px solid #38bdf8;
-        padding: 10px 12px;
-        border-radius: 8px;
-        margin-top: 10px;
-        font-size: 13px;
-        color: #e2e8f0;
-        line-height: 1.6;
-    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -84,18 +61,12 @@ def get_live_market_data(ticker, fallback_price):
         res = requests.get(url, headers=headers, timeout=4)
         if res.status_code == 200:
             soup = BeautifulSoup(res.text, 'html.parser')
-            
-            # جلب السعر
             p_elem = soup.find(class_=lambda x: x and 'stock-overview__price' in x)
             if p_elem:
                 price = float(p_elem.text.strip().replace(',', ''))
-            
-            # جلب نسبة التغير
             chg_elem = soup.find(class_=lambda x: x and 'stock-overview__change' in x)
             if chg_elem:
                 change_pct = chg_elem.text.strip()
-            
-            # جلب الفوليوم
             vol_elem = soup.find('div', string=lambda t: t and 'الحجم' in t)
             if vol_elem and vol_elem.find_next_sibling():
                 volume = vol_elem.find_next_sibling().text.strip()
@@ -162,7 +133,7 @@ if "expenses" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# جمع البيانات الحية لجميع الأسهم
+# جمع البيانات الحية
 portfolio_data = []
 for s in DEFAULT_STOCKS:
     market_info = get_live_market_data(s["ticker"], s["fallback_price"])
@@ -220,35 +191,32 @@ with tab1:
         </div>
         """, unsafe_allow_html=True)
 
-# 2. التحليل الفني وقراءة الفوليوم وتوقع الجلسة القادمة (مضبوط بالكامل)
+# 2. شاشة التحليل الفني وقراءة الفوليوم وتوقع الجلسة (باستخدام أدوات Streamlit المعتمدة للموبايل)
 with tab2:
-    st.markdown("<div style='color: #94a3b8; font-size: 13px; margin-bottom: 10px;'>التحليل الفني الديناميكي، قراءة السيولة، وتوقعات الجلسة:</div>", unsafe_allow_html=True)
+    st.caption("التحليل الفني الديناميكي، قراءة السيولة، وتوقعات الجلسة:")
     for _, row in df.iterrows():
         analysis = analyze_volume_and_forecast(row["ticker"], row["price"], row["avg"])
         
-        card_html = f"""
-        <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span class="card-title">{row['icon']} {row['name']}</span>
-                <span class="card-ticker">{row['ticker']}</span>
-            </div>
+        with st.container():
+            col_t1, col_t2 = st.columns([3, 1])
+            with col_t1:
+                st.subheader(f"{row['icon']} {row['name']}")
+            with col_t2:
+                st.markdown(f"**`{row['ticker']}`**")
             
-            <div class="tech-grid">
-                <div class="tech-item">السعر الحالي:<br><span class="tech-val" style="color: #38bdf8;">{row['price']:.2f} ج.م</span></div>
-                <div class="tech-item">الاتجاه الفني:<br><span class="tech-val">{analysis['trend']}</span></div>
-                <div class="tech-item">حجم التداول:<br><span class="tech-val" style="color: #facc15;">{row['volume']}</span></div>
-                <div class="tech-item">حالة السيولة:<br><span class="tech-val" style="font-size: 11px;">{analysis['vol_status']}</span></div>
-                <div class="tech-item">الدعم الأول:<br><span class="tech-val" style="color: #4ade80;">{analysis['sup']:.2f} ج.م</span></div>
-                <div class="tech-item">المقاومة الأولى:<br><span class="tech-val" style="color: #fb923c;">{analysis['res']:.2f} ج.م</span></div>
-                <div class="tech-item" style="grid-column: span 2;">وقف الخسارة المقترح:<br><span class="tech-val" style="color: #f87171;">{analysis['sl']:.2f} ج.م</span></div>
-            </div>
+            c1, c2 = st.columns(2)
+            with c1:
+                st.metric("السعر الحالي", f"{row['price']:.2f} ج.م", delta=row['change'])
+                st.metric("حجم التداول", str(row['volume']))
+                st.markdown(f"🟢 **الدعم الأول:** `{analysis['sup']:.2f} ج.م`")
+            with c2:
+                st.metric("الاتجاه الفني", analysis['trend'])
+                st.markdown(f"💧 **السيولة:** {analysis['vol_status']}")
+                st.markdown(f"🟠 **المقاومة الأولى:** `{analysis['res']:.2f} ج.م`")
             
-            <div class="forecast-box">
-                <b style="color: #38bdf8;">🔮 توقع جلسة الغد:</b><br>{analysis['forecast']}
-            </div>
-        </div>
-        """
-        st.markdown(card_html, unsafe_allow_html=True)
+            st.markdown(f"🔴 **وقف الخسارة المقترح:** `{analysis['sl']:.2f} ج.م`")
+            st.info(f"🔮 **توقع جلسة الغد:**\n\n{analysis['forecast']}")
+            st.divider()
 
 # 3. الأخبار
 with tab3:
