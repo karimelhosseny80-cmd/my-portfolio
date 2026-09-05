@@ -33,6 +33,12 @@ PURIFY_RATES = {
     "AMOC": 0.011,
 }
 
+PARTNERS = [
+    {"name": "الأم", "capital": 100000.0, "icon": "👑"},
+    {"name": "محمود", "capital": 65000.0, "icon": "👨‍💼"},
+    {"name": "نورا", "capital": 60000.0, "icon": "👩‍💼"},
+]
+
 def load_data():
     if os.path.exists(DATA_FILE):
         try:
@@ -177,8 +183,9 @@ def get_stock_news(ticker):
         pass
     return news_items
 
-# جمع البيانات وحساب الأوزان
 portfolio_data = []
+total_purify_due = 0.0
+
 for s in st.session_state.db["stocks"]:
     market_info = get_live_market_data(s["ticker"], s["fallback_price"])
     item = dict(s)
@@ -186,6 +193,14 @@ for s in st.session_state.db["stocks"]:
     item["volume"] = market_info["volume"]
     item["change"] = market_info["change"]
     portfolio_data.append(item)
+    
+    # حساب مبالغ التطهير
+    s_cost = s["qty"] * s["avg"]
+    s_val = s["qty"] * market_info["price"]
+    s_pnl = s_val - s_cost
+    s_rate = PURIFY_RATES.get(s["ticker"], 0.0)
+    if s_pnl > 0 and s_rate > 0:
+        total_purify_due += (s_pnl * s_rate)
 
 df = pd.DataFrame(portfolio_data)
 total_cost = (df["qty"] * df["avg"]).sum()
@@ -217,7 +232,7 @@ if st.button("🔄 تحديث أسعار وفوليوم السوق الآن", us
 
 menu = st.selectbox(
     "☰ اختيار القسم:",
-    ["📊 الأسهم والمحفظة", "🎯 الأهداف والتقدم", "📈 الفوليوم والتنبيهات", "📝 تسجيل الصفقات والتسوية", "⚖️ التطهير الشرعي", "📰 أخبار البورصة", "🤖 مساعد التداول", "💵 إدارة الكاش والنسخ الاحتياطي"]
+    ["📊 الأسهم والمحفظة", "👥 حسابات الشركاء والأرباح", "🎯 الأهداف والتقدم", "📈 الفوليوم والتنبيهات", "📝 تسجيل الصفقات والتسوية", "⚖️ التطهير الشرعي", "📰 أخبار البورصة", "🤖 مساعد التداول", "💵 إدارة الكاش والنسخ الاحتياطي"]
 )
 st.write("")
 
@@ -248,7 +263,48 @@ if menu == "📊 الأسهم والمحفظة":
             st.markdown(f":{color_delta}[**الربح / الخسارة الدفترية:** {pnl:+,.2f} ج.م ({ret:+.2f}%)]")
             st.divider()
 
-# 2. شاشة الأهداف السعرية
+# 2. شاشة حسابات الشركاء بعد خصم التطهير
+elif menu == "👥 حسابات الشركاء والأرباح":
+    st.markdown("### 👥 توزيع الشركاء وحصص الأرباح (بعد خصم التطهير)")
+    
+    total_partner_capital = sum(p["capital"] for p in PARTNERS)
+    
+    # إجمالي الأرباح الكلية (دفترية + محققة من صفقات البيع)
+    gross_profit = net_pnl + st.session_state.db.get("realized_pnl", 0.0)
+    
+    # خصم مبلغ التطهير الشرعي للوصول للأرباح الحلال الصافية
+    net_distributable_profit = gross_profit - total_purify_due
+    
+    st.markdown(f"""
+    <div style="background: linear-gradient(135deg, #1e1b4b, #2e1065); border: 1px solid #7c3aed; border-radius: 14px; padding: 16px; margin-bottom: 16px; text-align: center;">
+        <div style="color: #c4b5fd; font-size: 13px;">رأس المال الأصلي الموزع: <b>{total_partner_capital:,.2f} ج.م</b></div>
+        <div style="color: #94a3b8; font-size: 12px; margin-top: 4px;">إجمالي الأرباح الإجمالية: {gross_profit:+,.2f} ج.م | التطهير المخصوم: -{total_purify_due:,.2f} ج.م</div>
+        <div style="color: #34d399; font-size: 20px; font-weight: 800; margin-top: 6px;">
+            صافي الربح الحلال للتوزيع: {net_distributable_profit:+,.2f} ج.م
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    for p in PARTNERS:
+        share_ratio = p["capital"] / total_partner_capital
+        partner_pct = share_ratio * 100
+        partner_profit = net_distributable_profit * share_ratio
+        total_entitlement = p["capital"] + partner_profit
+        
+        with st.container():
+            col_p1, col_p2 = st.columns([3, 1])
+            col_p1.markdown(f"#### {p['icon']} {p['name']}")
+            col_p2.markdown(f"**`{partner_pct:.2f}%`**")
+            
+            c1, c2 = st.columns(2)
+            c1.caption(f"رأس المال: **{p['capital']:,.2f} ج.م**")
+            p_color = "green" if partner_profit >= 0 else "red"
+            c2.markdown(f":{p_color}[الربح الصافي: **{partner_profit:+,.2f} ج.م**]")
+            
+            st.markdown(f"💰 **إجمالي المستحق الحالي:** `{total_entitlement:,.2f} ج.م`")
+            st.divider()
+
+# 3. شاشة الأهداف السعرية
 elif menu == "🎯 الأهداف والتقدم":
     st.markdown("### 🎯 متابعة المستهدفات السعرية وجني الأرباح")
     st.caption("حدد هدفك السعري لكل سهم لمتابعة نسبة التقدم لحظياً:")
@@ -277,7 +333,7 @@ elif menu == "🎯 الأهداف والتقدم":
                 st.success("🎉 السهم وصل لهدفه السعري بنجاح!")
             st.divider()
 
-# 3. شاشة الفوليوم والتنبيهات
+# 4. شاشة الفوليوم والتنبيهات
 elif menu == "📈 الفوليوم والتنبيهات":
     st.markdown("### 📈 التحليل الفني، الفوليوم، والتنبيهات")
     for _, row in df.iterrows():
@@ -302,7 +358,7 @@ elif menu == "📈 الفوليوم والتنبيهات":
             st.info(f"🔮 **توقع جلسة الغد:**\n\n{analysis['forecast']}")
             st.divider()
 
-# 4. شاشة الصفقات مع إدخال العمولة الفعلية بالجنيه
+# 5. شاشة الصفقات مع إدخال العمولة الفعلية بالجنيه
 elif menu == "📝 تسجيل الصفقات والتسوية":
     st.markdown("### 📝 تسجيل صفقة جديدة")
     stock_tickers = [s["ticker"] for s in st.session_state.db["stocks"]]
@@ -359,17 +415,15 @@ elif menu == "📝 تسجيل الصفقات والتسوية":
         for tr in reversed(st.session_state.db["trades"][-6:]):
             st.markdown(f"• **{tr['type']}** {tr['qty']:,} في `{tr['ticker']}` بسعر {tr['price']:.3f} ج.م (عمولة فعلية: {tr.get('fee', 0):.2f} ج.م) | ⏳ تسوية: `{tr['settle_date']}`")
 
-# 5. شاشة التطهير الشرعي
+# 6. شاشة التطهير الشرعي
 elif menu == "⚖️ التطهير الشرعي":
     st.markdown("### ⚖️ الموقف الشرعي ومبالغ التطهير المستحقة")
-    total_purify_due = 0.0
     for _, row in df.iterrows():
         val = row["qty"] * row["price"]
         cost = row["qty"] * row["avg"]
         pnl = val - cost
         rate = PURIFY_RATES.get(row["ticker"], 0.0)
         purify_amt = (pnl * rate) if (pnl > 0 and rate > 0) else 0.0
-        total_purify_due += purify_amt
         
         with st.container():
             st.markdown(f"**{row['icon']} {row['name']}** (`{row['ticker']}`)")
@@ -392,7 +446,7 @@ elif menu == "⚖️ التطهير الشرعي":
     </div>
     """, unsafe_allow_html=True)
 
-# 6. شاشة الأخبار
+# 7. شاشة الأخبار
 elif menu == "📰 أخبار البورصة":
     st.markdown("### 📰 أحدث الإفصاحات وأخبار الأسهم")
     for _, row in df.iterrows():
@@ -404,7 +458,7 @@ elif menu == "📰 أخبار البورصة":
             else:
                 st.caption("لا توجد إفصاحات جديدة اليوم.")
 
-# 7. شاشة البوت
+# 8. شاشة البوت
 elif menu == "🤖 مساعد التداول":
     st.markdown("### 🤖 مساعد التداول الذكي")
     api_key = st.text_input("أدخل مفتاح Gemini API:", type="password")
@@ -454,7 +508,7 @@ elif menu == "🤖 مساعد التداول":
                 except Exception as e:
                     st.error(f"حدث خطأ: {e}")
 
-# 8. شاشة الكاش والنسخ الاحتياطي
+# 9. شاشة الكاش والنسخ الاحتياطي
 elif menu == "💵 إدارة الكاش والنسخ الاحتياطي":
     st.markdown("### 💵 إدارة الكاش والمصاريف")
     with st.form("cash_form"):
