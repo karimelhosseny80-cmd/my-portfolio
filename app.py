@@ -106,13 +106,13 @@ SHARIAH_ALL_STOCKS = {
     "PRDC": {"name": "بايونيرز بروبرتيز للتنمية العمرانية بي ار اي جروب", "rate": 0.00, "category": "متوافق"},
 }
 
+# تم حذف ECAP من قائمة الأسهم المفتوحة
 DEFAULT_STOCKS = [
     {"icon": "⚙️", "name": "العربية للصناعات الهندسية", "ticker": "EEII", "qty": 24372, "avg": 2.2904, "fallback_price": 2.35, "target_price": 2.60},
     {"icon": "🌾", "name": "نهر الخير للتنمية والاستثمار", "ticker": "KRDI", "qty": 123690, "avg": 0.4159, "fallback_price": 0.449, "target_price": 0.52},
     {"icon": "🏢", "name": "القاهرة للإسكان والتعمير", "ticker": "ELKA", "qty": 21990, "avg": 1.7544, "fallback_price": 1.87, "target_price": 2.10},
     {"icon": "🏺", "name": "سيراميكا ريماس", "ticker": "CERA", "qty": 22100, "avg": 1.3159, "fallback_price": 1.50, "target_price": 1.65},
     {"icon": "🏗️", "name": "المصريين للإسكان والتنمية", "ticker": "EHDR", "qty": 9793, "avg": 2.6623, "fallback_price": 2.88, "target_price": 3.20},
-    {"icon": "💎", "name": "العز سيراميك (الجوهرة)", "ticker": "ECAP", "qty": 365, "avg": 34.4619, "fallback_price": 33.62, "target_price": 38.00},
     {"icon": "🔩", "name": "مصر الوطنية للصلب (عتاقة)", "ticker": "ATQA", "qty": 592, "avg": 12.6712, "fallback_price": 12.17, "target_price": 14.00},
     {"icon": "🛢️", "name": "أموك للزيوت المعدنية", "ticker": "AMOC", "qty": 449, "avg": 7.9226, "fallback_price": 13.50, "target_price": 15.00},
 ]
@@ -123,26 +123,42 @@ PARTNERS = [
     {"name": "نورا", "capital": 60000.0, "icon": "👩‍💼"},
 ]
 
+DEFAULT_INITIAL_DATA = {
+    "stocks": DEFAULT_STOCKS,
+    "cash": 12580.05,
+    "realized_pnl": 1.46,
+    "trades": [
+        {
+            "date": "2026-09-06",
+            "type": "بيع",
+            "ticker": "ECAP",
+            "qty": 365,
+            "price": 34.50,
+            "val": 12592.50,
+            "fee": 12.45,
+            "settle_date": "2026-09-08",
+            "cycle": "T+2"
+        }
+    ],
+    "expenses": []
+}
+
 def load_data():
     if os.path.exists(DATA_FILE):
         try:
             with open(DATA_FILE, "r", encoding="utf-8") as f:
                 d = json.load(f)
+                # حذف أي بقايا لـ ECAP إن وجدت في الملف المحلي
+                d["stocks"] = [s for s in d.get("stocks", []) if s.get("ticker") != "ECAP"]
                 if "realized_pnl" not in d:
-                    d["realized_pnl"] = 0.0
+                    d["realized_pnl"] = 1.46
                 for s in d.get("stocks", []):
                     if "target_price" not in s:
                         s["target_price"] = round(s["avg"] * 1.15, 2)
                 return d
         except Exception:
             pass
-    return {
-        "stocks": DEFAULT_STOCKS,
-        "cash": 0.0,
-        "realized_pnl": 0.0,
-        "trades": [],
-        "expenses": []
-    }
+    return DEFAULT_INITIAL_DATA
 
 def save_data(data):
     with open(DATA_FILE, "w", encoding="utf-8") as f:
@@ -152,6 +168,14 @@ if "db" not in st.session_state:
     st.session_state.db = load_data()
 if "messages" not in st.session_state:
     st.session_state.messages = []
+
+# التأكد من إزالة ECAP من الجلسة وتحديث الكاش
+st.session_state.db["stocks"] = [s for s in st.session_state.db["stocks"] if s.get("ticker") != "ECAP"]
+if st.session_state.db.get("cash", 0) < 12580.05:
+    st.session_state.db["cash"] = 12580.05
+if st.session_state.db.get("realized_pnl", 0) < 1.46:
+    st.session_state.db["realized_pnl"] = 1.46
+save_data(st.session_state.db)
 
 st.markdown("""
     <style>
@@ -278,7 +302,6 @@ for s in st.session_state.db["stocks"]:
     item["change"] = market_info["change"]
     portfolio_data.append(item)
     
-    # حساب مبالغ التطهير: لو السهم غير مدرج في كاشف، يتم اعتبار التطهير 100% من أرباحه بالكامل
     s_cost = s["qty"] * s["avg"]
     s_val = s["qty"] * market_info["price"]
     s_pnl = s_val - s_cost
@@ -286,10 +309,13 @@ for s in st.session_state.db["stocks"]:
     if s["ticker"] in SHARIAH_ALL_STOCKS:
         s_rate = SHARIAH_ALL_STOCKS[s["ticker"]]["rate"]
     else:
-        s_rate = 1.0  # 100% تطهير للأرباح للأسهم غير المتوافقة
+        s_rate = 1.0
         
     if s_pnl > 0:
         total_purify_due += (s_pnl * s_rate)
+
+# إضافة ربح بيعة الجوهرة (1.46 ج.م) كـ 100% تطهير
+total_purify_due += 1.46
 
 df = pd.DataFrame(portfolio_data)
 total_cost = (df["qty"] * df["avg"]).sum()
@@ -303,7 +329,7 @@ realized_color = "#34d399" if st.session_state.db.get("realized_pnl", 0) >= 0 el
 
 st.markdown(f"""
 <div class="summary-card">
-    <div style="color: #a5b4fc; font-size: 13px;">إجمالي القيمة السوقية</div>
+    <div style="color: #a5b4fc; font-size: 13px;">إجمالي القيمة السوقية للأسهم</div>
     <div style="color: #ffffff; font-size: 26px; font-weight: 800; margin: 4px 0;">{total_market:,.2f} ج.م</div>
     <div style="color: {pnl_color}; font-size: 15px; font-weight: 700;">
         الأرباح الدفترية: {net_pnl:+,.2f} ج.م ({net_return:+.2f}%)
@@ -364,7 +390,7 @@ if menu == "📊 الأسهم والمحفظة":
             st.markdown(f":{color_delta}[**الربح / الخسارة الدفترية:** {pnl:+,.2f} ج.م ({ret:+.2f}%)]")
             st.divider()
 
-# 2. شاشة فرص وتوصيات الجلسة القادمة
+# 2. شاشة التوصيات
 elif menu == "🎯 فرص وتوصيات الجلسة القادمة":
     st.markdown("### 🎯 أفضل فرصتين مضاربيتين لجلسة الغد")
     st.caption("مختارة حصراً من قائمة كاشف المتوافقة مع الشريعة الإسلامية بناءً على الفوليوم والسيولة:")
@@ -377,7 +403,7 @@ elif menu == "🎯 فرص وتوصيات الجلسة القادمة":
                 <span style="background: #0369a1; color: #e0f2fe; padding: 2px 8px; border-radius: 6px; font-size: 12px;">فرصة مضاربة 1</span>
             </div>
             <div style="color: #94a3b8; font-size: 13px; margin: 8px 0;">
-                🔹 <b>حركة الفوليوم:</b> امتصاص بيعي وتجميع قوي جداً قرب القاع مع سيولة تخطت 60 مليون سهم.<br>
+                🔹 <b>حركة الفوليوم:</b> تجميع وامتصاص بيعي قوي قرب القاع مع سيولة تخطت 60 مليون سهم.<br>
                 🔹 <b>الموقف الشرعي (كاشف):</b> شرعي مختلط B (نسبة التطهير: <b>0.06%</b> فقط من الأرباح).
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; background: #0f172a; padding: 10px; border-radius: 8px;">
@@ -397,7 +423,7 @@ elif menu == "🎯 فرص وتوصيات الجلسة القادمة":
                 <span style="background: #0369a1; color: #e0f2fe; padding: 2px 8px; border-radius: 6px; font-size: 12px;">فرصة مضاربة 2</span>
             </div>
             <div style="color: #94a3b8; font-size: 13px; margin: 8px 0;">
-                🔹 <b>حركة الفوليوم:</b> تناقص بيعي مع ثبات ملحوظ فوق الدعم اللحظي وتماسك إيجابي.<br>
+                🔹 <b>حركة الفوليوم:</b> تناقص بيعي مع تماسك أعلى الدعم اللحظي واستعداد لزخم صاعد.<br>
                 🔹 <b>الموقف الشرعي (كاشف):</b> شرعي مختلط C (نسبة التطهير: <b>0.16%</b> من الأرباح).
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; background: #0f172a; padding: 10px; border-radius: 8px;">
@@ -504,7 +530,7 @@ elif menu == "📝 تسجيل الصفقات والتسوية":
     
     with st.form("trade_form"):
         t_type = st.radio("نوع الصفقة:", ["شراء", "بيع"], horizontal=True)
-        t_ticker = st.selectbox("اختر السهم:", stock_tickers)
+        t_ticker = st.selectbox("اختر السهم:", stock_tickers if stock_tickers else ["لا توجد أسهم"])
         t_qty = st.number_input("الكمية:", min_value=1, step=50)
         t_price = st.number_input("سعر التنفيذ (ج.م):", min_value=0.01, step=0.05, format="%.4f")
         t_fee_actual = st.number_input("قيمة العمولة والرسوم الفعلية (ج.م):", min_value=0.0, step=1.0, format="%.2f")
@@ -554,7 +580,7 @@ elif menu == "📝 تسجيل الصفقات والتسوية":
         for tr in reversed(st.session_state.db["trades"][-6:]):
             st.markdown(f"• **{tr['type']}** {tr['qty']:,} في `{tr['ticker']}` بسعر {tr['price']:.3f} ج.م (عمولة فعلية: {tr.get('fee', 0):.2f} ج.م) | ⏳ تسوية: `{tr['settle_date']}`")
 
-# 7. شاشة التطهير الشرعي مع قاعدة 100% تطهير للأسهم الخارجة عن كاشف
+# 7. شاشة التطهير الشرعي
 elif menu == "⚖️ التطهير الشرعي":
     st.markdown("### ⚖️ الموقف الشرعي ومبالغ التطهير المستحقة (كاشف)")
     for _, row in df.iterrows():
@@ -568,7 +594,7 @@ elif menu == "⚖️ التطهير الشرعي":
             rate = info["rate"]
             cat = info["category"]
         else:
-            rate = 1.0  # خارج الشريعة بالكامل
+            rate = 1.0
             cat = "خارج الشريعة (غير مدرج في كاشف)"
             
         purify_amt = (pnl * rate) if (pnl > 0 and rate > 0) else 0.0
@@ -592,12 +618,12 @@ elif menu == "⚖️ التطهير الشرعي":
             
     st.markdown(f"""
     <div style="background-color: #1e1b4b; border: 1px solid #6366f1; border-radius: 12px; padding: 14px; text-align: center;">
-        <div style="color: #c7d2fe; font-size: 13px;">إجمالي مبالغ التطهير المستحقة على أرباح المحفظة الحالية</div>
+        <div style="color: #c7d2fe; font-size: 13px;">إجمالي مبالغ التطهير المستحقة (شاملة أرباح صفقات البيع المحققة)</div>
         <div style="color: #fb923c; font-size: 22px; font-weight: bold; margin-top: 4px;">{total_purify_due:,.2f} ج.م</div>
     </div>
     """, unsafe_allow_html=True)
 
-# 8. شاشة الدليل الشرعي الكامل لكاشف
+# 8. شاشة الدليل الشرعي
 elif menu == "📜 الدليل الشرعي لأسهم كاشف":
     st.markdown("### 📜 دليل الأسهم الحلال المعتمدة (كاشف)")
     st.caption("جميع الأسهم المصرح بالمضاربة عليها ونسب تطهيرها الرسمية:")
