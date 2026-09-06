@@ -1,0 +1,11 @@
+{
+  "name": "محفظة تيلدا للأسهم المصرية",
+  "short_name": "محفظة تيلدا",
+  "description": "منصة تتبع وإدارة محفظة الأسهم المصرية والشركاء والتطهير الشرعي لحظياً",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#10b981",
+  "dir": "rtl",
+  "lang": "ar"
+}

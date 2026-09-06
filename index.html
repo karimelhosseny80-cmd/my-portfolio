@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>محفظة تيلدا | الداش بورد المالي للأسهم المصرية</title>
+  <meta name="description" content="داش بورد احترافي متطور لإدارة وتتبع محفظة تيلدا للأسهم المصرية، أسهم كاشف الشرعية، وتوزيع أرباح الشركاء">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#10b981">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="app-wrapper">
+    <!-- خلفية حجب للشاشات الصغيرة عند فتح السايدبار -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- ==================== القائمة الجانبية المودرن (Compact Sidebar) ==================== -->
+    <aside class="sidebar" id="appSidebar">
+      <div class="sidebar-header">
+        <div class="brand-box">
+          <div class="brand-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          </div>
+          <div class="brand-text">
+            <h1>محفظة تيلدا</h1>
+          </div>
+        </div>
+        <div class="sidebar-banner">
+          صلِّ على محمد ﷺ
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <!-- المجموعة 1: نظرة عامة والتحليل -->
+        <div>
+          <div class="nav-group-title">نظرة عامة والتحليل</div>
+          <ul class="nav-links">
+            <li class="nav-item active" data-tab="tab-dashboard">
+              <span class="icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+              </span>
+              <span>لوحة التحكم الشاملة</span>
+            </li>
+            <li class="nav-item" data-tab="tab-stocks">
+              <span class="icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+              </span>
+              <span>أسهم المحفظة بالتفصيل</span>
+            </li>
+            <li class="nav-item" data-tab="tab-recommendations">
+              <span class="icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+              </span>
+              <span>فرص وتوصيات الغد</span>
+              <span class="badge" style="background: var(--primary-subtle); color: var(--primary);">فرصتين</span>
+            </li>
+            <li class="nav-item" data-tab="tab-volume">
+              <span class="icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+              </span>
+              <span>الفوليوم والتحليل الفني</span>
+            </li>
+            <li class="nav-item" data-tab="tab-targets">
+              <span class="icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>
+              </span>
+              <span>المستهدفات والتقدم</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- المجموعة 2: المعاملات المالية والشركاء -->
+        <div>
+          <div class="nav-group-title">المعاملات المالية والشركاء</div>
+          <ul class="nav-links">
+            <li class="nav-item" data-tab="tab-partners">
+              <span class="icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </span>
+              <span>حسابات الشركاء والأرباح</span>
+            </li>
+            <li class="nav-item" data-tab="tab-trades">
+              <span class="icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
+              </span>
+              <span>تسجيل الصفقات والتسوية</span>
+              <span class="badge" style="background: var(--primary-subtle); color: var(--primary);">T+1/T+2</span>
+            </li>
+            <li class="nav-item" data-tab="tab-cash">
+              <span class="icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg>
+              </span>
+              <span>إدارة الكاش والمصاريف</span>
+            </li>
+            <li class="nav-item" data-tab="tab-tools">
+              <span class="icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
+              </span>
+              <span>حاسبات التداول والزكاة</span>
+              <span class="badge" style="background: var(--primary-subtle); color: var(--primary);">DCA</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- المجموعة 3: كاشف والشريعة والذكاء الاصطناعي -->
+        <div>
+          <div class="nav-group-title">كاشف والذكاء الاصطناعي</div>
+          <ul class="nav-links">
+            <li class="nav-item" data-tab="tab-shariah">
+              <span class="icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>
+              </span>
+              <span>التطهير الشرعي للمحفظة</span>
+            </li>
+            <li class="nav-item" data-tab="tab-kashef">
+              <span class="icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              </span>
+              <span>دليل أسهم كاشف (80+)</span>
+            </li>
+            <li class="nav-item" data-tab="tab-news">
+              <span class="icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
+              </span>
+              <span>أخبار وإفصاحات الشركات</span>
+            </li>
+            <li class="nav-item" data-tab="tab-ai">
+              <span class="icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+              </span>
+              <span>مساعد التداول الذكي</span>
+              <span class="badge" style="background: var(--primary-subtle); color: var(--primary);">Gemini</span>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="wallet-quick-pill">
+          <div class="label">الكاش المتاح للشراء:</div>
+          <div class="val" id="sidebarCashVal">0.00 ج.م</div>
+        </div>
+        <button class="btn btn-glass" style="width: 100%; font-size: 12.5px; padding: 8px 12px; gap: 7px;" onclick="downloadBackup()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+          <span>تنزيل نسخة احتياطية</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ==================== المنطقة الرئيسية (Main Content) ==================== -->
+    <main class="main-content">
+      <!-- الشريط العلوي (Top Navbar) -->
+      <header class="top-navbar">
+        <div class="top-navbar-left">
+          <button class="menu-toggle-btn" onclick="toggleSidebar()" aria-label="القائمة">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+          </button>
+          <div class="top-navbar-title">
+            <h2 id="topNavTitle">لوحة التحكم الشاملة</h2>
+            <p id="topNavDesc">متابعة دقيقة لمؤشرات المحفظة، الأسهم، والأرباح الحلال</p>
+          </div>
+          <!-- بادج مؤشر الاتصال اللحظي بالبورصة المصرية -->
+          <div class="market-live-indicator" id="marketLiveIndicator" title="حالة ربط البورصة المصرية اللحظي">
+            <span class="live-pulse-dot" id="livePulseDot"></span>
+            <span id="marketStatusText">البورصة: متصل لحظياً</span>
+            <span id="marketStatusTime" style="color: var(--text-muted); font-size: 11px; margin-right: 4px;"></span>
+          </div>
+        </div>
+
+        <div class="top-navbar-actions">
+          <!-- زر التبديل بين الثيم الفاتح والداكن -->
+          <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="تبديل المظهر (فاتح / داكن)">
+            <span id="themeIcon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+            </span>
+          </button>
+
+          <!-- زر التحديث التلقائي الآلي -->
+          <button class="btn btn-glass" id="autoRefreshBtn" onclick="toggleAutoRefresh()" title="تشغيل / إيقاف التحديث اللحظي الآلي">
+            <span id="autoRefreshIcon">⏱️</span>
+            <span id="autoRefreshLabel">تحديث آلي: مفعل (30ث)</span>
+          </button>
+
+          <!-- زر تشغيل المحفظة على الموبايل -->
+          <button class="btn btn-glass" onclick="openMobileModal()" style="color: #38bdf8; font-weight: 700; border-color: rgba(56, 189, 248, 0.35);" title="رابط وتشغيل المحفظة على الموبايل عبر الواي فاي أو كود QR">
+            <span>📱</span>
+            <span>للموبايل</span>
+          </button>
+
+          <button class="btn btn-primary btn-refresh-market" id="refreshPricesBtn" onclick="refreshMarketPrices()" title="تحديث أحدث الأسعار والفوليوم والتوصيات الآن من البورصة">
+            <svg class="refresh-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+            <span>تحديث لحظي</span>
+          </button>
+
+          <button class="btn btn-glass" onclick="resetToOfficialPortfolio()" title="إعادة ضبط أسهم المحفظة للأرقام الرسمية">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+            <span>الأرقام الرسمية</span>
+          </button>
+
+          <button class="btn btn-glass" onclick="switchToTab('tab-trades')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
+            <span>صفقة جديدة</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- ==================== شريط البورصة المصرية اللحظي الحي (TradingView Ticker Tape) ==================== -->
+      <div class="ticker-tape-container">
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+          {
+            "symbols": [
+              { "proName": "EGX:EGX30", "title": "مؤشر EGX30" },
+              { "proName": "EGX:EGX70EWI", "title": "مؤشر EGX70" },
+              { "proName": "EGX:KRDI", "title": "نهر الخير" },
+              { "proName": "EGX:EEII", "title": "العربية الهندسية" },
+              { "proName": "EGX:CERA", "title": "ريماس" },
+              { "proName": "EGX:ELKA", "title": "القاهرة للإسكان" },
+              { "proName": "EGX:AMOC", "title": "أموك" },
+              { "proName": "EGX:SWDY", "title": "السويدي" },
+              { "proName": "EGX:EHDR", "title": "المصريين للإسكان" },
+              { "proName": "EGX:COMI", "title": "التجاري الدولي CIB" },
+              { "proName": "EGX:KORA", "title": "قره للطاقة" }
+            ],
+            "showSymbolLogo": true,
+            "isTransparent": true,
+            "displayMode": "adaptive",
+            "colorTheme": "dark",
+            "locale": "ar_AE"
+          }
+          </script>
+        </div>
+      </div>
+
+      <!-- حاوية المحتوى الرئيسي -->
+      <div class="content-area">
+
+        <!-- ==================== 1. لوحة التحكم الشاملة (3 Columns x 2 Rows KPI Grid) ==================== -->
+        <section class="tab-pane active" id="tab-dashboard">
+          <!-- شبكة المؤشرات المالية: صفين متطابقين بالضبط (3 كروت في كل صف) -->
+          <div class="kpi-grid" id="kpiGrid"></div>
+
+          <!-- شريط الوزن النسبي لتوزيع السيولة -->
+          <div class="portfolio-weight-bar-card">
+            <div class="weight-bar-header">
+              <h3>التوزيع النسبي لاستثمارات المحفظة</h3>
+              <span id="weightTotalVal" style="font-size: 12px; font-weight: 700; color: var(--text-muted);"></span>
+            </div>
+            <div class="weight-bar-segments" id="weightSegments"></div>
+            <div class="weight-legend" id="weightLegend"></div>
+          </div>
+
+          <!-- أعمدة الداش بورد (2 Columns) -->
+          <div class="dashboard-columns">
+            <!-- العمود الأيمن: أرصدة الأسهم وآخر الصفقات -->
+            <div class="dashboard-main-col">
+              <div class="panel-card">
+                <div class="panel-card-header">
+                  <h3>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                    <span>أرصدة الأسهم وموقف الربحية اللحظي</span>
+                  </h3>
+                  <button class="btn btn-glass" style="font-size: 11.5px; padding: 3px 8px;" onclick="switchToTab('tab-stocks')">
+                    عرض الكروت الكاملة ⬅️
+                  </button>
+                </div>
+                <div class="stocks-table-wrapper">
+                  <table class="stocks-table">
+                    <thead>
+                      <tr>
+                        <th>م</th>
+                        <th>اسم السهم</th>
+                        <th>الرمز</th>
+                        <th>الكمية</th>
+                        <th>متوسط الشراء</th>
+                        <th>السعر اللحظي</th>
+                        <th>التغير</th>
+                        <th>التوصية الفنية</th>
+                        <th>الفوليوم</th>
+                        <th>إجمالي التكلفة</th>
+                        <th>القيمة السوقية</th>
+                        <th>الربح / الخسارة</th>
+                        <th>العائد %</th>
+                        <th>الوزن</th>
+                      </tr>
+                    </thead>
+                    <tbody id="dashboardStocksTableBody"></tbody>
+                    <tfoot id="dashboardStocksTableFoot" style="background: var(--bg-subtle); font-weight: 800; border-top: 2px solid var(--border-color);"></tfoot>
+                  </table>
+                </div>
+              </div>
+
+              <div class="panel-card">
+                <div class="panel-card-header">
+                  <h3>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
+                    <span>آخر الصفقات ومواعيد التسوية</span>
+                  </h3>
+                  <button class="btn btn-glass" style="font-size: 11.5px; padding: 3px 8px;" onclick="switchToTab('tab-trades')">
+                    إدارة الصفقات ⬅️
+                  </button>
+                </div>
+                <div class="stocks-table-wrapper">
+                  <table class="stocks-table">
+                    <thead>
+                      <tr>
+                        <th>التاريخ</th>
+                        <th>النوع</th>
+                        <th>السهم</th>
+                        <th>الكمية</th>
+                        <th>سعر التنفيذ</th>
+                        <th>العمولة</th>
+                        <th>موعد التسوية</th>
+                      </tr>
+                    </thead>
+                    <tbody id="dashboardTradesTableBody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- العمود الأيسر: فرص الغد وتوزيع الشركاء والتطهير -->
+            <div class="dashboard-side-col">
+              <!-- توصيات الغد -->
+              <div class="panel-card">
+                <div class="panel-card-header">
+                  <h3 style="color: var(--primary);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                    <span>توصيات الجلسة القادمة</span>
+                  </h3>
+                  <button class="btn btn-glass" style="font-size: 11.5px; padding: 2px 7px;" onclick="switchToTab('tab-recommendations')">
+                    التفاصيل ⬅️
+                  </button>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  <div style="background: var(--bg-subtle); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                      <b style="color: var(--text-primary); font-size: 13px;">نهر الخير (KRDI)</b>
+                      <span class="badge-emerald" style="font-size: 10px;">مضاربة 1</span>
+                    </div>
+                    <div style="font-size: 11.5px; color: var(--text-secondary); line-height: 1.6;">
+                      دخول: <b class="text-primary-color">0.445 - 0.450</b> | أهداف: <b class="text-emerald">0.472 / 0.495</b><br>
+                      وقف الخسارة الصارم: <b class="text-rose">0.435 ج.م</b>
+                    </div>
+                  </div>
+
+                  <div style="background: var(--bg-subtle); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                      <b style="color: var(--text-primary); font-size: 13px;">العربية للهندسية (EEII)</b>
+                      <span class="badge-emerald" style="font-size: 10px;">مضاربة 2</span>
+                    </div>
+                    <div style="font-size: 11.5px; color: var(--text-secondary); line-height: 1.6;">
+                      دخول: <b class="text-primary-color">2.32 - 2.35</b> | أهداف: <b class="text-emerald">2.46 / 2.55</b><br>
+                      وقف الخسارة الصارم: <b class="text-rose">2.26 ج.م</b>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- أنصبة الشركاء الحالية -->
+              <div class="panel-card">
+                <div class="panel-card-header">
+                  <h3>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <span>أنصبة الشركاء الحالية</span>
+                  </h3>
+                  <button class="btn btn-glass" style="font-size: 11.5px; padding: 2px 7px;" onclick="switchToTab('tab-partners')">
+                    التوزيع ⬅️
+                  </button>
+                </div>
+                <div id="dashboardPartnersQuickList" style="display: flex; flex-direction: column; gap: 6px;"></div>
+              </div>
+
+              <!-- التطهير الشرعي -->
+              <div class="panel-card">
+                <div class="panel-card-header">
+                  <h3>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>
+                    <span>مستحق التطهير الشرعي</span>
+                  </h3>
+                  <button class="btn btn-glass" style="font-size: 11.5px; padding: 2px 7px;" onclick="switchToTab('tab-shariah')">
+                    التفاصيل ⬅️
+                  </button>
+                </div>
+                <div style="text-align: center; padding: 6px 0;">
+                  <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 2px;">إجمالي المبالغ الواجب إخراجها:</div>
+                  <div style="font-size: 20px; font-weight: 800; color: var(--warning);" id="dashboardPurifyVal">0.00 ج.م</div>
+                  <div style="font-size: 11px; color: var(--text-muted); margin-top: 3px;">محتسبة طبقاً لقوائم كاشف الرسمية</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 2. أسهم المحفظة بالتفصيل ==================== -->
+        <section class="tab-pane" id="tab-stocks">
+          <div class="section-header">
+            <h2>بطاقات الأسهم والأوزان النسبية المفصلة</h2>
+            <p>متابعة لحظية لأسعار الأسهم، الكميات، متوسط التكلفة، والأرباح والخسائر الدفترية</p>
+          </div>
+          <div class="stocks-grid" id="stocksGrid"></div>
+        </section>
+
+        <!-- ==================== 3. فرص وتوصيات الغد ==================== -->
+        <section class="tab-pane" id="tab-recommendations">
+          <div class="section-header">
+            <h2>أفضل فرصتين مضاربيتين لجلسة الغد</h2>
+            <p>مختارة حصراً من قائمة كاشف المتوافقة مع الشريعة الإسلامية بناءً على الفوليوم وحركة السيولة</p>
+          </div>
+
+          <div class="recommendation-card">
+            <div class="rec-header">
+              <span style="font-size: 15px; font-weight: 800; color: var(--text-primary);">نهر الخير للتنمية والاستثمار (KRDI)</span>
+              <span class="rec-badge">فرصة مضاربة 1</span>
+            </div>
+            <div class="rec-details">
+              🔹 <b>حركة الفوليوم:</b> امتصاص بيعي وتجميع قوي جداً قرب القاع مع سيولة تاريخية تخطت 60 مليون سهم.<br>
+              🔹 <b>الموقف الشرعي (كاشف):</b> شرعي مختلط B (نسبة التطهير: <b class="text-primary-color">0.06%</b> فقط من الأرباح).
+            </div>
+            <div class="rec-targets-grid">
+              <div>نقطة الدخول: <b class="text-primary-color">0.445 - 0.450 ج.م</b></div>
+              <div>المستهدف الأول: <b class="text-emerald">0.472 ج.م</b></div>
+              <div>المستهدف الثاني: <b class="text-emerald">0.495 ج.م</b></div>
+              <div>وقف الخسارة: <b class="text-rose">0.435 ج.م</b></div>
+            </div>
+          </div>
+
+          <div class="recommendation-card">
+            <div class="rec-header">
+              <span style="font-size: 15px; font-weight: 800; color: var(--text-primary);">العربية للصناعات الهندسية (EEII)</span>
+              <span class="rec-badge">فرصة مضاربة 2</span>
+            </div>
+            <div class="rec-details">
+              🔹 <b>حركة الفوليوم:</b> تناقص بيعي مع ثبات ملحوظ فوق الدعم اللحظي وتماسك إيجابي مستمر.<br>
+              🔹 <b>الموقف الشرعي (كاشف):</b> شرعي مختلط C (نسبة التطهير: <b class="text-primary-color">0.16%</b> من الأرباح).
+            </div>
+            <div class="rec-targets-grid">
+              <div>نقطة الدخول: <b class="text-primary-color">2.32 - 2.35 ج.م</b></div>
+              <div>المستهدف الأول: <b class="text-emerald">2.46 ج.م</b></div>
+              <div>المستهدف الثاني: <b class="text-emerald">2.55 ج.م</b></div>
+              <div>وقف الخسارة: <b class="text-rose">2.26 ج.م</b></div>
+            </div>
+          </div>
+
+          <!-- مسح البورصة المصرية اللحظي -->
+          <div class="panel-card" style="margin-top: 18px;">
+            <div class="panel-card-header">
+              <h3>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <span>مسح البورصة المصرية اللحظي (أنشط الأسهم الشرعية سيولة وإشارات شراء)</span>
+              </h3>
+              <button class="btn btn-glass" style="font-size: 11.5px; padding: 3px 8px;" onclick="fetchLiveMarketScreener()">
+                🔄 تحديث مسح السوق
+              </button>
+            </div>
+            <div id="liveMarketScreenerContainer">
+              <div style="text-align: center; padding: 22px; color: var(--text-muted);">
+                جاري مسح البورصة المصرية واستخراج أنشط الفرص...
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 4. حسابات الشركاء والأرباح ==================== -->
+        <section class="tab-pane" id="tab-partners">
+          <div class="section-header">
+            <h2>توزيع الشركاء وحصص الأرباح (بعد خصم التطهير الشرعي)</h2>
+            <p>حساب دقيق لصافي الأرباح الحلال وتوزيعها بنسبة مساهمة رأس مال كل شريك</p>
+          </div>
+          <div class="partners-hero" id="partnersHero"></div>
+          <div class="partners-grid" id="partnersGrid"></div>
+
+          <!-- إصدار كشف حساب رسمي للشريك -->
+          <div class="panel-card" style="margin-top: 18px;">
+            <div class="panel-card-header">
+              <h3>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                <span>إصدار كشف حساب شريك (جاهز للطباعة والمشاركة)</span>
+              </h3>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 14px;">
+              <label for="statementPartnerSelect" style="font-size: 13px; font-weight: 700;">اختر الشريك:</label>
+              <select id="statementPartnerSelect" class="form-control" style="max-width: 260px;" onchange="renderPartnerStatement()">
+                <option value="الأم">الأم (رأس مال 100,000 ج.م)</option>
+                <option value="محمود">محمود (رأس مال 65,000 ج.م)</option>
+                <option value="نورا">نورا (رأس مال 60,000 ج.م)</option>
+                <option value="كريم">كريم (مدير المحفظة 💼)</option>
+              </select>
+              <button class="btn btn-primary" onclick="printPartnerStatement()">
+                🖨️ طباعة / حفظ كشف الحساب PDF
+              </button>
+            </div>
+            <div id="partnerStatementContainer"></div>
+          </div>
+
+          <!-- تسجيل التوزيعات النقدية المسحوبة للشريك -->
+          <div class="panel-card" style="margin-top: 18px;">
+            <div class="panel-card-header">
+              <h3>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="m17 5-5-3-5 3"/><path d="m17 19-5 3-5-3"/><path d="M2 12h20"/></svg>
+                <span>سجل التوزيعات النقدية الفعلية (Payouts)</span>
+              </h3>
+            </div>
+            <form id="payoutForm" style="display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 14px;">
+              <div class="form-group" style="margin-bottom: 0; min-width: 140px;">
+                <label for="payoutPartner" style="font-size: 12px;">الشريك:</label>
+                <select id="payoutPartner" class="form-control" required>
+                  <option value="الأم">الأم</option>
+                  <option value="محمود">محمود</option>
+                  <option value="نورا">نورا</option>
+                  <option value="كريم">كريم (مدير المحفظة)</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom: 0; min-width: 140px;">
+                <label for="payoutAmount" style="font-size: 12px;">المبلغ المسدد (ج.م):</label>
+                <input type="number" id="payoutAmount" class="form-control" min="1" step="100" placeholder="مثال: 5000" required>
+              </div>
+              <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 180px;">
+                <label for="payoutNotes" style="font-size: 12px;">ملاحظات / تحويل:</label>
+                <input type="text" id="payoutNotes" class="form-control" placeholder="مثال: تحويل إنستاباي أرباح شهرية">
+              </div>
+              <button type="submit" class="btn btn-primary" style="padding: 9px 16px;">
+                تسجيل سداد الأرباح
+              </button>
+            </form>
+            <div id="payoutsTableContainer"></div>
+          </div>
+        </section>
+
+        <!-- ==================== 5. المستهدفات والتقدم ==================== -->
+        <section class="tab-pane" id="tab-targets">
+          <div class="section-header">
+            <h2>متابعة المستهدفات السعرية وجني الأرباح</h2>
+            <p>حدد المستهدفات السعرية لكل سهم وتابع نسبة تحقيق الهدف لحظة بلحظة</p>
+          </div>
+          <div id="targetsContainer"></div>
+        </section>
+
+        <!-- ==================== 6. الفوليوم والتحليل الفني ==================== -->
+        <section class="tab-pane" id="tab-volume">
+          <div class="section-header">
+            <h2>التحليل الفني، الفوليوم، والتنبيهات الذكية</h2>
+            <p>قراءة فنية للدعوم، المقاومات، وقف الخسارة، وتوقعات حركة السيولة لجلسة الغد</p>
+          </div>
+          <div id="volumeContainer"></div>
+        </section>
+
+        <!-- ==================== 7. تسجيل الصفقات والتسوية ==================== -->
+        <section class="tab-pane" id="tab-trades">
+          <div class="section-header">
+            <h2>تسجيل الصفقات والتسوية النقدية</h2>
+            <p>إدخال عمليات البيع والشراء بالعمولات الفعلية مع احتساب دورات التسوية (T+1 / T+2)</p>
+          </div>
+
+          <div class="form-card">
+            <form id="tradeForm">
+              <div style="display: flex; gap: 18px; align-items: center; margin-bottom: 12px;">
+                <span style="font-size: 12.5px; font-weight: 700; color: var(--text-secondary);">نوع العملية:</span>
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                  <input type="radio" name="tradeType" value="شراء" checked> <b class="text-emerald">شراء</b>
+                </label>
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                  <input type="radio" name="tradeType" value="بيع"> <b class="text-rose">بيع</b>
+                </label>
+              </div>
+
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="tradeTicker">اختر السهم:</label>
+                  <select id="tradeTicker" class="form-control" required></select>
+                </div>
+                <div class="form-group">
+                  <label for="tradeQty">الكمية (عدد الأسهم):</label>
+                  <input type="number" id="tradeQty" class="form-control" min="1" step="10" placeholder="مثال: 1000" required>
+                </div>
+                <div class="form-group">
+                  <label for="tradePrice">سعر التنفيذ (ج.م):</label>
+                  <input type="number" id="tradePrice" class="form-control" min="0.001" step="0.01" placeholder="مثال: 2.35" required>
+                </div>
+                <div class="form-group">
+                  <label for="tradeFee">قيمة العمولة الفعلية (ج.م):</label>
+                  <input type="number" id="tradeFee" class="form-control" min="0" step="0.5" placeholder="مثال: 15.50" value="0.0">
+                </div>
+                <div class="form-group">
+                  <label for="tradeCycle">دورة التسوية:</label>
+                  <select id="tradeCycle" class="form-control">
+                    <option value="T+1">T+1 (تسوية اليوم التالي)</option>
+                    <option value="T+2">T+2 (تسوية بعد يومين)</option>
+                  </select>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="width: 100%; padding: 9px; font-size: 13px;">
+                تسجيل وتنفيذ الصفقة
+              </button>
+            </form>
+          </div>
+
+          <div class="section-header" style="margin-top: 18px;">
+            <h3>سجل الصفقات ومواعيد التسوية الكاملة</h3>
+          </div>
+          <div class="stocks-table-wrapper panel-card">
+            <table class="stocks-table">
+              <thead>
+                <tr>
+                  <th>التاريخ</th>
+                  <th>النوع</th>
+                  <th>السهم</th>
+                  <th>الكمية</th>
+                  <th>سعر التنفيذ</th>
+                  <th>العمولة</th>
+                  <th>تاريخ ودورة التسوية</th>
+                </tr>
+              </thead>
+              <tbody id="tradesTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ==================== 8. التطهير الشرعي ==================== -->
+        <section class="tab-pane" id="tab-shariah">
+          <div class="section-header">
+            <h2>الموقف الشرعي ومبالغ التطهير المستحقة (منصة كاشف)</h2>
+            <p>تطبيق معايير الشريعة الإسلامية، مع تطهير 100% من أرباح أي سهم غير مدرج في كاشف</p>
+          </div>
+          <div class="hero-summary-card" id="shariahHero" style="text-align: center; margin-bottom: 16px;"></div>
+          <div id="shariahContainer"></div>
+        </section>
+
+        <!-- ==================== 9. دليل أسهم كاشف ==================== -->
+        <section class="tab-pane" id="tab-kashef">
+          <div class="section-header">
+            <h2>دليل الأسهم الحلال المعتمدة (منصة كاشف)</h2>
+            <p>جميع الأسهم المصرح بالمضاربة عليها ونسب تطهير أرباحها الرسمية (80+ سهم)</p>
+          </div>
+
+          <div style="margin-bottom: 12px;">
+            <input type="text" id="kashefSearch" class="form-control" placeholder="ابحث برمز السهم (Ticker) أو اسم الشركة أو التصنيف..." style="padding: 8px 12px; font-size: 13px;">
+          </div>
+
+          <div class="stocks-table-wrapper panel-card">
+            <table class="stocks-table">
+              <thead>
+                <tr>
+                  <th>رمز السهم</th>
+                  <th>اسم الشركة</th>
+                  <th>التصنيف الشرعي</th>
+                  <th>نسبة التطهير</th>
+                </tr>
+              </thead>
+              <tbody id="kashefTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ==================== 10. أخبار وإفصاحات الشركات ==================== -->
+        <section class="tab-pane" id="tab-news">
+          <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h2>مركز أخبار وإفصاحات أسهم البورصة المصرية</h2>
+              <p>متابعة لحظية للقوائم المالية، توزيعات الأرباح، وقرارات مجالس الإدارة لكل سهم في محفظتك</p>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-primary" onclick="toggleAddNewsForm()" style="font-size: 12.5px; padding: 7px 14px; font-weight: 800;">
+                ➕ إضافة إفصاح / خبر جديد
+              </button>
+            </div>
+          </div>
+
+          <!-- بطاقات إحصائيات الأخبار -->
+          <div class="news-stats-bar" id="newsStatsBar">
+            <div class="news-stat-pill">
+              <span style="font-size: 24px;">📢</span>
+              <div>
+                <div style="font-size: 11px; color: var(--text-muted);">إجمالي الإفصاحات المتاحة</div>
+                <div id="statTotalNews" style="font-size: 16px; font-weight: 800; color: var(--text-primary);">0</div>
+              </div>
+            </div>
+            <div class="news-stat-pill">
+              <span style="font-size: 24px;">📊</span>
+              <div>
+                <div style="font-size: 11px; color: var(--text-muted);">نتائج الأعمال والقوائم</div>
+                <div id="statEarningsNews" style="font-size: 16px; font-weight: 800; color: #10b981;">0</div>
+              </div>
+            </div>
+            <div class="news-stat-pill">
+              <span style="font-size: 24px;">💰</span>
+              <div>
+                <div style="font-size: 11px; color: var(--text-muted);">توزيعات الكوبونات والأرباح</div>
+                <div id="statDividendsNews" style="font-size: 16px; font-weight: 800; color: #f59e0b;">0</div>
+              </div>
+            </div>
+            <div class="news-stat-pill">
+              <span style="font-size: 24px;">📝</span>
+              <div>
+                <div style="font-size: 11px; color: var(--text-muted);">إفصاحات مضافة منك</div>
+                <div id="statCustomNews" style="font-size: 16px; font-weight: 800; color: #06b6d4;">0</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- نموذج إضافة خبر / إفصاح مخصص (مخفي افتراضياً) -->
+          <div class="add-news-form-card" id="addNewsFormCard" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+              <h3 style="font-size: 14px; font-weight: 800; color: var(--text-primary); margin: 0;">➕ إضافة خبر أو إفصاح جديد لسهم</h3>
+              <button class="btn btn-glass" onclick="toggleAddNewsForm()" style="padding: 2px 8px; font-size: 12px;">✕ إلغاء</button>
+            </div>
+            <form id="customNewsForm" onsubmit="handleCustomNewsSubmit(event)">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 12px;">
+                <div class="form-group">
+                  <label for="newsStockSelect" style="font-size: 12px;">اختر السهم:</label>
+                  <select id="newsStockSelect" class="form-control" required></select>
+                </div>
+                <div class="form-group">
+                  <label for="newsCategorySelect" style="font-size: 12px;">نوع الإفصاح:</label>
+                  <select id="newsCategorySelect" class="form-control" required>
+                    <option value="earnings">📊 نتائج أعمال وقوائم مالية</option>
+                    <option value="dividend">💰 توزيع أرباح وكوبونات</option>
+                    <option value="board">⚖️ قرارات مجلس إدارة / جمعية عامة</option>
+                    <option value="deal">🤝 صفقات واستحواذات وتوسعات</option>
+                    <option value="custom">📝 ملاحظة أو خبر مخصص</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="newsSourceInput" style="font-size: 12px;">المصدر:</label>
+                  <input type="text" id="newsSourceInput" class="form-control" placeholder="مثال: البورصة المصرية / مباشر / مجلس الإدارة" value="إفصاح رسمي" required>
+                </div>
+                <div class="form-group">
+                  <label for="newsDateInput" style="font-size: 12px;">التاريخ:</label>
+                  <input type="date" id="newsDateInput" class="form-control" required>
+                </div>
+              </div>
+              <div class="form-group" style="margin-bottom: 12px;">
+                <label for="newsTitleInput" style="font-size: 12px;">عنوان الخبر أو الإفصاح:</label>
+                <input type="text" id="newsTitleInput" class="form-control" placeholder="مثال: نمو صافي أرباح السهم بنسبة 30% خلال الربع الأخير" required>
+              </div>
+              <div class="form-group" style="margin-bottom: 14px;">
+                <label for="newsDetailsInput" style="font-size: 12px;">التفاصيل الكاملة للإفصاح:</label>
+                <textarea id="newsDetailsInput" class="form-control" rows="3" placeholder="اكتب ملخص الإفصاح أو تفاصيل القرار هنا..." required></textarea>
+              </div>
+              <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                <button type="submit" class="btn btn-primary" style="font-size: 12.5px; padding: 7px 18px; font-weight: 800;">💾 حفظ الإفصاح</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- شريط أزرار الأسهم السريعة (Stock Filter Chips) -->
+          <div style="margin-bottom: 8px;">
+            <div style="font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 8px;">فلترة الأخبار حسب السهم (اضغط على السهم لعرض أخباره مباشرة):</div>
+            <div class="news-stock-chips" id="newsStockChipsBar">
+              <!-- يتم توليد أزرار الأسهم ديناميكياً هنا -->
+            </div>
+          </div>
+
+          <!-- شريط البحث وفلترة التصنيفات -->
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;">
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="newsCategoryFilterPills">
+              <button class="news-nav-btn active" onclick="filterNewsCategory('all', this)">📋 الكل</button>
+              <button class="news-nav-btn" onclick="filterNewsCategory('earnings', this)">📊 نتائج أعمال</button>
+              <button class="news-nav-btn" onclick="filterNewsCategory('dividend', this)">💰 توزيعات أرباح</button>
+              <button class="news-nav-btn" onclick="filterNewsCategory('board', this)">⚖️ قرارات إدارة</button>
+              <button class="news-nav-btn" onclick="filterNewsCategory('deal', this)">🤝 صفقات وتوسعات</button>
+              <button class="news-nav-btn" onclick="filterNewsCategory('custom', this)">📝 إفصاحاتي</button>
+            </div>
+            <div style="min-width: 240px; flex: 1; max-width: 350px;">
+              <input type="text" id="newsSearchInput" class="form-control" placeholder="🔍 بحث في عناوين وتفاصيل الأخبار..." oninput="handleNewsSearch(this.value)" style="font-size: 12px; padding: 6px 12px;">
+            </div>
+          </div>
+
+          <!-- حاوية قائمة الأخبار الديناميكية -->
+          <div id="newsContainer" style="display: flex; flex-direction: column; gap: 12px;">
+            <!-- يتم تعبئة الأخبار ديناميكياً بواسطة JavaScript -->
+          </div>
+        </section>
+
+        <!-- ==================== 11. مساعد التداول الذكي ==================== -->
+        <section class="tab-pane" id="tab-ai">
+          <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <h2>مساعد التداول الذكي الآلي (Gemini 3.6 Flash)</h2>
+              <p>مدير صفقات آلي: اكتب أمر البيع/الشراء أو ارفع لقطة شاشة من ثندر ليتم تحديث المحفظة والكاش فوراً!</p>
+            </div>
+            <div class="ai-status-pill">
+              <span class="dot-online"></span>
+              <span>جيمناي متصل ومفعل للربط التلقائي</span>
+            </div>
+          </div>
+
+          <div class="form-card" style="margin-bottom: 12px; padding: 10px 14px;">
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+              <label for="geminiApiKey" style="font-size: 12px; font-weight: 700; color: var(--text-secondary);">مفتاح Gemini API:</label>
+              <input type="password" id="geminiApiKey" class="form-control" value="AQ.Ab8RN6JjuV_LyMA6n54c5Y9mtwKpjvZLSrLawPKiRUEbliUs9Q" placeholder="ألصق مفتاح Gemini API هنا..." style="flex: 1; min-width: 220px;" onchange="saveGeminiKey(this.value)">
+              <span style="font-size: 11px; color: var(--success); font-weight: 700;">✓ تم ربط المفتاح الافتراضي بنجاح</span>
+            </div>
+          </div>
+
+          <!-- أزرار الأوامر السريعة للتسهيل -->
+          <div class="ai-quick-pills">
+            <span class="quick-pill" onclick="setChatPrompt('اشتريت 500 سهم فوري بسعر 7.20 ج.م والعمولة 5 جنيه')">
+              🛒 اشتريت 500 سهم فوري بسعر 7.20
+            </span>
+            <span class="quick-pill" onclick="setChatPrompt('بعت 200 سهم في السويدي اليكتريك بسعر 45 ج.م')">
+              💰 بعت 200 سهم في السويدي بسعر 45
+            </span>
+            <span class="quick-pill" onclick="setChatPrompt('أودعت كاش جديد في المحفظة بقيمة 10000 جنيه')">
+              💵 أودعت 10000 كاش
+            </span>
+            <span class="quick-pill" onclick="setChatPrompt('حلل لي أسهم محفظتي والفوليوم ونسب الأوزان وحماية الأرباح')">
+              📊 تحليل شامل للمحفظة والفوليوم
+            </span>
+          </div>
+
+          <div class="chat-wrapper">
+            <div class="chat-messages" id="chatMessages"></div>
+
+            <!-- شريط معاينة الصورة المرفقة قبل الإرسال -->
+            <div class="chat-image-preview-bar" id="chatImagePreviewBar" style="display: none;">
+              <div class="preview-thumb-container">
+                <img id="chatImagePreview" src="" alt="معاينة لقطة الشاشة">
+                <div class="preview-info">
+                  <span id="chatImageName" class="file-name"></span>
+                  <span class="file-hint">سيتم فحص لقطة الشاشة واستخراج الصفقات وتسجيلها آلياً بالمحفظة</span>
+                </div>
+                <button type="button" class="btn-clear-img" onclick="clearSelectedImage()" title="إلغاء الصورة">✕</button>
+              </div>
+            </div>
+
+            <!-- شريط إدخال الأوامر والصور -->
+            <div class="chat-input-bar">
+              <input type="file" id="chatImageInput" accept="image/png, image/jpeg, image/jpg, image/webp" style="display: none;" onchange="handleImageSelected(event)">
+              <button type="button" class="btn btn-glass chat-upload-btn" onclick="document.getElementById('chatImageInput').click()" title="إرفاق صورة أو لقطة شاشة من ثندر (أمر شراء/بيع)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                <span style="font-size: 11.5px; font-weight: 700;">إرفاق صورة</span>
+              </button>
+              <input type="text" id="chatInput" class="form-control" placeholder="اكتب أمرك (مثال: اشتريت 1000 سهم فوري بسعر 7.20) أو أرفق لقطة شاشة من ثندر...">
+              <button type="button" class="btn btn-primary" id="sendAiBtn" onclick="sendAiMessage()">
+                <span>إرسال</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 12. إدارة الكاش والنسخ ==================== -->
+        <section class="tab-pane" id="tab-cash">
+          <div class="section-header">
+            <h2>إدارة الكاش والمصاريف والنسخ الاحتياطي</h2>
+            <p>تسجيل الإيداعات والسحوبات والمصاريف الشخصية لضبط رصيد الكاش بدقة</p>
+          </div>
+
+          <div class="form-card">
+            <form id="cashForm">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="cashAction">نوع المعاملة:</label>
+                  <select id="cashAction" class="form-control">
+                    <option value="إيداع كاش للمحفظة">إيداع كاش للمحفظة</option>
+                    <option value="سحب كاش من المحفظة">سحب كاش من المحفظة</option>
+                    <option value="مصروف شخصي">مصروف شخصي</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="cashAmt">المبلغ (ج.م):</label>
+                  <input type="number" id="cashAmt" class="form-control" min="1" step="50" placeholder="مثال: 5000" required>
+                </div>
+                <div class="form-group">
+                  <label for="cashDesc">البيان / ملاحظات:</label>
+                  <input type="text" id="cashDesc" class="form-control" placeholder="مثال: تحويل أرباح أو تغذية رصيد">
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width: 100%; padding: 9px;">
+                حفظ حركة الكاش
+              </button>
+            </form>
+          </div>
+
+          <div class="section-header" style="margin-top: 18px;">
+            <h3>آخر حركات الكاش المسجلة:</h3>
+          </div>
+          <div id="expensesList" style="margin-bottom: 18px;"></div>
+
+          <div class="form-card">
+            <h3 style="font-size: 14px; margin-bottom: 4px; color: var(--text-primary);">النسخ الاحتياطي واسترجاع البيانات</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">
+              بياناتك محفوظة تلقائياً على متصفحك. يمكنك تنزيل نسخة JSON على جهازك في أي وقت أو استيرادها على أي جهاز آخر.
+            </p>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button class="btn btn-primary" onclick="downloadBackup()">
+                تنزيل نسخة احتياطية (portfolio_data.json)
+              </button>
+              <label class="btn btn-glass" style="cursor: pointer;">
+                استيراد نسخة سابقة
+                <input type="file" accept=".json" onchange="importBackup(event)" style="display: none;">
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 13. أدوات التداول والزكاة الذكية ==================== -->
+        <section class="tab-pane" id="tab-tools">
+          <div class="section-header">
+            <h2>أدوات التداول الذكية، حاسبة التبريد، والزكاة الشرعية</h2>
+            <p>حساب دقيق لمتوسطات التبريد وخطة تعديل المراكز، واحتساب زكاة الأسهم وفقاً للضوابط الشرعية</p>
+          </div>
+
+          <div class="calc-grid">
+            <!-- حاسبة التبريد وتعديل المتوسط (DCA Break-even Calculator) -->
+            <div class="calc-card">
+              <div class="calc-header">
+                <span style="font-size: 20px;">❄️</span>
+                <div>
+                  <h3>حاسبة التبريد وتعديل متوسط الشراء (DCA)</h3>
+                  <div style="font-size: 11.5px; color: var(--text-muted);">احسب متوسطك الجديد والسيولة المطلوبة ونقطة التعادل</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="dcaStockSelect" style="font-size: 12.5px;">اختر سهم من محفظتك (أو أدخل يدوي):</label>
+                <select id="dcaStockSelect" class="form-control" onchange="populateDcaFromStock(this.value)">
+                  <option value="">-- إدخال يدوي مخصص --</option>
+                </select>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div class="form-group">
+                  <label for="dcaCurrentQty" style="font-size: 12px;">الكمية الحالية (سهم):</label>
+                  <input type="number" id="dcaCurrentQty" class="form-control" min="1" step="10" placeholder="10000" oninput="calculateDca()">
+                </div>
+                <div class="form-group">
+                  <label for="dcaCurrentAvg" style="font-size: 12px;">متوسط الشراء الحالي (ج.م):</label>
+                  <input type="number" id="dcaCurrentAvg" class="form-control" min="0.01" step="0.01" placeholder="2.50" oninput="calculateDca()">
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div class="form-group">
+                  <label for="dcaNewPrice" style="font-size: 12px;">سعر التبريد الجديد (ج.م):</label>
+                  <input type="number" id="dcaNewPrice" class="form-control" min="0.01" step="0.01" placeholder="1.80" oninput="calculateDca()">
+                </div>
+                <div class="form-group">
+                  <label for="dcaNewQty" style="font-size: 12px;">الكمية المراد شراؤها (سهم):</label>
+                  <input type="number" id="dcaNewQty" class="form-control" min="1" step="10" placeholder="5000" oninput="calculateDca()">
+                </div>
+              </div>
+
+              <div class="calc-results-box" id="dcaResultsBox">
+                <div class="calc-row">
+                  <span style="color: var(--text-muted);">إجمالي الأسهم الجديد:</span>
+                  <b id="dcaTotalShares" style="color: var(--text-primary);">0 سهم</b>
+                </div>
+                <div class="calc-row">
+                  <span style="color: var(--text-muted);">سيولة التبريد المطلوبة:</span>
+                  <b id="dcaRequiredCash" class="text-primary-color">0.00 ج.م</b>
+                </div>
+                <div class="calc-row">
+                  <span style="color: var(--text-muted);">نسبة خفض المتوسط:</span>
+                  <b id="dcaReductionPct" class="text-emerald">0.0%</b>
+                </div>
+                <div class="calc-row">
+                  <span>متوسط الشراء الجديد بعد التبريد:</span>
+                  <span id="dcaNewAvg" style="color: var(--primary); font-size: 16px;">0.00 ج.م</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- حاسبة زكاة الأسهم الرسمية (Zakat Calculator) -->
+            <div class="calc-card">
+              <div class="calc-header">
+                <span style="font-size: 20px;">⚖️</span>
+                <div>
+                  <h3>حاسبة زكاة الأسهم الشرعية المعتمدة</h3>
+                  <div style="font-size: 11.5px; color: var(--text-muted);">طبقاً لمعايير هيئة المحاسبة والمراجعة للمؤسسات المالية الإسلامية (AAOIFI)</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="zakatType" style="font-size: 12.5px;">نوع استراتيجية التداول:</label>
+                <select id="zakatType" class="form-control" onchange="calculateZakat()">
+                  <option value="trading">مضارب (عروض تجارة) - زكاة 2.5% على القيمة السوقية + الأرباح</option>
+                  <option value="investor_div">مستثمر طويل الأجل (زكاة النماء) - 10% على الأرباح النقدية الموزعة</option>
+                  <option value="investor_assets">مستثمر طويل الأجل (زكاة الموجودات) - 2.5% على صافي أصول الشركات الزكوية</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="zakatGoldPrice" style="font-size: 12px;">سعر جرام الذهب عيار 21 اليوم (لاحتساب النصاب):</label>
+                <input type="number" id="zakatGoldPrice" class="form-control" value="4800" min="1000" step="50" oninput="calculateZakat()">
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 3px;">النصاب الشرعي = 85 جرام ذهب × سعر الجرام</div>
+              </div>
+
+              <div class="calc-results-box" id="zakatResultsBox">
+                <div class="calc-row">
+                  <span style="color: var(--text-muted);">نصاب الزكاة الحالي:</span>
+                  <b id="zakatNisabVal" style="color: var(--text-primary);">0.00 ج.م</b>
+                </div>
+                <div class="calc-row">
+                  <span style="color: var(--text-muted);">وعاء الزكاة المحسوب:</span>
+                  <b id="zakatBaseVal" style="color: var(--text-primary);">0.00 ج.م</b>
+                </div>
+                <div class="calc-row">
+                  <span style="color: var(--text-muted);">حالة وجوب الزكاة:</span>
+                  <b id="zakatStatusVal" class="text-emerald">تجب الزكاة (تخطى النصاب)</b>
+                </div>
+                <div class="calc-row">
+                  <span>مبلغ الزكاة الواجب إخراجه:</span>
+                  <span id="zakatDueVal" class="text-amber" style="font-size: 16px;">0.00 ج.م</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  <!-- ==================== نافذة الشارت التفاعلي اللحظي (TradingView Interactive Chart Modal) ==================== -->
+  <div class="chart-modal-backdrop" id="chartModalBackdrop" onclick="if(event.target === this) closeTradingViewModal()">
+    <div class="chart-modal">
+      <div class="chart-modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 18px;">📈</span>
+          <h3 id="chartModalTitle" style="font-size: 15px; font-weight: 800; color: var(--text-primary);">شارت السهم اللحظي</h3>
+          <span class="ticker-badge" id="chartModalTicker">EGX</span>
+        </div>
+        <button class="btn btn-glass" onclick="closeTradingViewModal()" style="padding: 4px 10px; font-weight: 800;">✕ إغلاق</button>
+      </div>
+      <div class="chart-modal-body" id="chartModalBody"></div>
+    </div>
+  </div>
+
+  <!-- ==================== نافذة أخبار وإفصاحات السهم اللحظية (Stock News & Disclosures Modal) ==================== -->
+  <div class="stock-news-modal-backdrop" id="stockNewsModalBackdrop" onclick="if(event.target === this) closeStockNewsModal()">
+    <div class="stock-news-modal">
+      <!-- رأس النافذة -->
+      <div class="stock-news-modal-header">
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <span style="font-size: 22px;">📰</span>
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <h3 id="modalStockNewsTitle" style="font-size: 16px; font-weight: 800; color: var(--text-primary); margin: 0;">أخبار وإفصاحات السهم</h3>
+              <span class="ticker-badge" id="modalStockNewsTicker">EGX</span>
+              <span id="modalStockNewsPriceBadge" class="screener-badge-hot">0.00 ج.م</span>
+            </div>
+            <div id="modalStockNewsSub" style="font-size: 11.5px; color: var(--text-muted); margin-top: 2px;">متابعة إفصاحات وقرارات الشركة المباشرة</div>
+          </div>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <button class="btn btn-glass" id="modalStockChartBtn" style="font-size: 11.5px; padding: 4px 10px;">📊 فتح الشارت</button>
+          <button class="btn btn-glass" onclick="closeStockNewsModal()" style="padding: 4px 10px; font-weight: 800;">✕ إغلاق</button>
+        </div>
+      </div>
+
+      <!-- شريط تبويبات داخل النافذة -->
+      <div class="stock-news-modal-nav">
+        <button class="news-nav-btn active" id="modalTabNewsListBtn" onclick="switchModalNewsTab('list')">📰 الإفصاحات والأخبار الرسمية</button>
+        <button class="news-nav-btn" id="modalTabNewsTvBtn" onclick="switchModalNewsTab('tv')">📈 التغطية الحية (TradingView / الأخبار)</button>
+        <button class="news-nav-btn" id="modalTabNewsAddBtn" onclick="switchModalNewsTab('add')">➕ إضافة خبر لهذا السهم</button>
+      </div>
+
+      <!-- محتوى النافذة -->
+      <div class="stock-news-modal-body" id="stockNewsModalBody">
+        <!-- محتوى قائمة الأخبار -->
+        <div id="modalNewsListView" style="display: flex; flex-direction: column; gap: 12px;"></div>
+
+        <!-- محتوى التغطية الحية -->
+        <div id="modalNewsTvView" style="display: none; height: 480px; width: 100%;"></div>
+
+        <!-- نموذج إضافة خبر للسهم الحالي -->
+        <div id="modalNewsAddView" style="display: none;">
+          <form id="modalAddNewsForm" onsubmit="handleModalAddNewsSubmit(event)">
+            <div style="background: var(--bg-subtle); padding: 16px; border-radius: 12px; border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 12px;">
+              <h4 style="font-size: 13.5px; font-weight: 800; color: var(--text-primary); margin: 0;">إضافة إفصاح أو قرار جديد لهذا السهم:</h4>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div class="form-group">
+                  <label style="font-size: 12px;">نوع الإفصاح:</label>
+                  <select id="modalAddCategory" class="form-control" required>
+                    <option value="earnings">📊 نتائج أعمال وقوائم مالية</option>
+                    <option value="dividend">💰 توزيع أرباح وكوبونات</option>
+                    <option value="board">⚖️ قرارات مجلس إدارة / جمعية عامة</option>
+                    <option value="deal">🤝 صفقات واستحواذات وتوسعات</option>
+                    <option value="custom">📝 ملاحظة أو خبر مخصص</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label style="font-size: 12px;">المصدر:</label>
+                  <input type="text" id="modalAddSource" class="form-control" value="إفصاح البورصة" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label style="font-size: 12px;">عنوان الإفصاح:</label>
+                <input type="text" id="modalAddTitle" class="form-control" placeholder="اكتب عنوان الخبر أو القرار..." required>
+              </div>
+              <div class="form-group">
+                <label style="font-size: 12px;">التفاصيل الكاملة:</label>
+                <textarea id="modalAddDetails" class="form-control" rows="4" placeholder="اكتب نص وتفاصيل الإفصاح أو القرار..." required></textarea>
+              </div>
+              <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                <button type="submit" class="btn btn-primary" style="font-size: 12.5px; padding: 6px 16px; font-weight: 800;">💾 حفظ الإفصاح فوراً</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== نافذة تشغيل المحفظة على الموبايل (Mobile App Modal) ==================== -->
+  <div class="chart-modal-backdrop" id="mobileModalBackdrop" onclick="if(event.target === this) closeMobileModal()">
+    <div class="chart-modal" style="max-width: 520px; text-align: center; padding: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 24px;">📱</span>
+          <h3 style="font-size: 16px; font-weight: 800; color: var(--text-primary); margin: 0;">تشغيل محفظة تيلدا على الموبايل</h3>
+        </div>
+        <button class="btn btn-glass" onclick="closeMobileModal()" style="padding: 4px 10px; font-weight: 800;">✕ إغلاق</button>
+      </div>
+
+      <div style="background: var(--bg-subtle); border: 1px solid var(--border-color); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 14px;">
+        <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.6;">
+          امسح كود <b>QR</b> بكاميرا الهاتف للفتح فوراً:
+        </div>
+
+        <div style="background: #fff; padding: 12px; border-radius: 12px; display: inline-block; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=http://192.168.1.101:8000" alt="Mobile QR Code" width="200" height="200" style="display: block;">
+        </div>
+
+        <div style="width: 100%;">
+          <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">أو افتح هذا الرابط في متصفح الموبايل (Chrome أو Safari):</div>
+          <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+            <input type="text" readonly id="mobileUrlInput" value="http://192.168.1.101:8000" class="form-control" style="text-align: center; font-weight: 800; color: var(--primary); font-size: 14px; max-width: 260px; direction: ltr;">
+            <button class="btn btn-primary" onclick="copyMobileUrl()" style="font-size: 12px; padding: 8px 14px; font-weight: 800;">📋 نسخ</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 14px; text-align: right; font-size: 12px; color: var(--text-secondary); line-height: 1.7; background: var(--bg-card); padding: 12px 14px; border-radius: 8px; border: 1px solid var(--border-color);">
+        <b style="color: var(--text-primary); display: block; margin-bottom: 4px;">📌 تعليمات الاتصال السريع:</b>
+        <div>1. تأكد أن هاتفك متصل <b>بنفس شبكة الواي فاي (Wi-Fi)</b> الخاصة بالكمبيوتر.</div>
+        <div>2. بمجرد فتح الرابط، اضغط على زر مشاركة / الخيارات في المتصفح واختر <b>"إضافة إلى الشاشة الرئيسية" (Add to Home Screen)</b> ليعمل كتطبيق هاتف مستقل!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- إشعار Toast للتأكيدات -->
+  <div class="toast-msg" id="toast"></div>
+
+  <!-- السكربتات -->
+  <script src="stocks_data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
